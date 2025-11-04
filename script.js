@@ -18,6 +18,7 @@ fetch('content.json')
             let videoTag = document.createElement('video');
             videoTag.src = video.src;
             videoTag.id = video.id;
+            videoTag.muted = true;
             videoTag.controls = true;
             videoTag.type = 'video/mp4';
             videoTag.width = '300';
