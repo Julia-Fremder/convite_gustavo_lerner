@@ -89,6 +89,7 @@ section {
 .map-container {
     margin-top: 25px;
     max-width: 600px;
+    border: solid 20px red;
 }
 
 .map-container h4 {
