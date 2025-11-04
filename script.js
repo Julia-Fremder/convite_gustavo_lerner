@@ -1,5 +1,5 @@
 let content;
-fetch('./content.json')
+fetch('content.json')
     .then(response => response.json())
     .then(result => {
         content = result;
