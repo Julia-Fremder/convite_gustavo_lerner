@@ -1,0 +1,94 @@
+{
+  "invite_bm_title": "Fabio Lerner e Júlia Fremder convidam para o Bar Mitzvah de seu filho",
+  "invite_bm_name": "Gustavo Lerner",
+  "invite_bm_img": {
+    "src": "./public/assets/images/torah-ezgif.com-slow-speed.gif",
+    "alt": "torah opening and closing",
+    "class": "invite_gif"
+  },
+  "invite_divider": {
+    "src": "./public/assets/images/calligraphic-ornamental-divider-collection.png",
+    "alt": "Website divider",
+    "class": "invite-divider"
+  },
+  "invite_wd_img": {
+    "src": "./public/assets/images/FabioEJulia.gif",
+    "alt": "Julia singing and kissing Fabio",
+    "class": "invite-gif"
+  },
+  "invite_wd_title": "Guga e Gabi convidam para o casamento dos seus pais",
+  "invite_wd_name": "Fabio & Júlia",
+  "videos_title": "Guga sendo Guga",
+  "photos_title": "Os noivos...",
+  "photo_gallery": [
+    {
+      "id": "2008_05",
+      "src": "./public/assets/images/2008_05.jpg",
+      "alt": "Fabio e Julia em maio de 2008"
+    },
+    {
+      "id": "2009_02",
+      "src": "./public/assets/images/2009_02.jpg",
+      "alt": "Fabio e Julia em fevereiro de 2009"
+    },
+    {
+      "id": "2009_02.1",
+      "alt": "Fabio e Julia em fevereiro de 2009",
+      "src": "./public/assets/images/2009_02.1.jpg"
+    },
+    {
+      "id": "2010_04",
+      "src": "./public/assets/images/2010_04.jpg",
+      "alt": "Fabio e Julia em abril de 2010"
+    },
+    {
+      "id": "2010_06",
+      "alt": "Fabio e Julia em junho de 2006",
+      "src": "./public/assets/images/2010_06.jpg"
+    },
+    {
+      "id": "2011_05",
+      "src": "./public/assets/images/2011_05.jpg",
+      "alt": "Fabio e Julia em maio de 2011"
+    },
+    {
+      "id": "2011_06",
+      "src": "./public/assets/images/2011_06.jpg",
+      "alt": "Fabio e Julia em junho de 2011"
+    },
+    {
+      "id": "2015_05",
+      "src": "./public/assets/images/2015_05.jpg",
+      "alt": "Fabio e Julia em maio de 2015"
+    },
+    {
+      "id": "2015_10",
+      "src": "./public/assets/images/2015_10.jpg",
+      "alt": "Fabio e Julia em outubro de 2015"
+    },
+    {
+      "id": "2015_12",
+      "src": "./public/assets/images/2015_12.jpg",
+      "alt": "Fabio e Julia em dezembro de 2015"
+    },
+    {
+      "id": "2021_05",
+      "src": "./public/assets/images/2021_05.jpeg",
+      "alt": "Fabio e Julia em maio de 2021"
+    }
+  ],
+  "video_gallery": [
+    {
+      "id": "video_1",
+      "src": "./public/assets/videos/seco_molhado.mp4"
+    },
+    {
+      "id": "video_2",
+      "src": "./public/assets/videos/guga_medico.mp4"
+    },
+    {
+      "id": "video_3",
+      "src": "./public/assets/videos/guga_luta_gabi.mp4"
+    }
+  ]
+}
