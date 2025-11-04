@@ -2,101 +2,90 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <meta property="og:title" content="Convite: Bar Mitzvah e Casamento">
-  <meta property="og:description" content="Convidamos você para celebrar conosco! Clique para ver todos os detalhes.">
-  <meta property="og:image" content="./public/assets/images/convite.png">
-  <meta property="og:url" content="https://julia-fremder.github.io/convite_gustavo_lerner/">
-  <meta name="twitter:card" content="summary_large_image">
-  <title>convite</title>
-  <link rel="stylesheet" href="./style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Allura&family=Marck+Script&display=swap"
-    rel="stylesheet" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta property="og:title" content="Convite: Bar Mitzvah e Casamento">
+    <meta property="og:description" content="Convidamos você para celebrar conosco! Clique para ver todos os detalhes.">
+    <meta property="og:image" content="./public/assets/images/convite.png">
+    <meta property="og:url" content="https://julia-fremder.github.io/convite_gustavo_lerner/">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Convite</title>
+    <link rel="stylesheet" href="./style.css"/>
 </head>
 
 <body>
-  <div class="container">
+<div class="container">
     <!-- Seção 1: Bar Mitzvah -->
     <section class="invite-section">
-      <p>Fabio Lerner e Júlia Fremder convidam para o Bar Mitzvah de seu filho</p>
-      <h2>Gustavo Lerner</h2>
-      <img src="./public/assets/images/torah-ezgif.com-slow-speed.gif" alt="torah opening and closing"
-        class="invite-gif">
-
+        <p id="invite_bm_title"></p>
+        <h2 id="invite_bm_name"></h2>
+        <img id="invite_bm_img" src="" alt=""/>
     </section>
 
-    <img src="./public/assets/images/calligraphic-ornamental-divider-collection.png" alt="Website divider"
-      class="invite-divider" />
+    <img id="invite_divider" src="" alt=""/>
 
     <!-- Seção 2: Casamento -->
     <section class="invite-section">
-      <p>Guga e Gabi convidam para o casamento dos seus pais</p>
-      <h2>Fabio & Júlia</h2>
-      <img src="./public/assets/images/FabioEJulia.gif" alt="Julia singing and kissing Fabio" class="invite-gif">
+        <p id="invite_wd_title"></p>
+        <h2 id="invite_wd_name"></h2>
+        <img id="invite_wd_img" src="" alt="" class="invite-gif">
     </section>
 
     <!-- Seção 3: Informações do evento -->
     <section class="info-section">
-      <div class="event-details">
-        <p><strong>16 de março de 2026 - 10:30</strong></p>
-        <p><strong>Bar Mitzvah: </strong>Sinagoga de Tomar</p>
-        <p><strong>Comemoração e casamento: </strong>Quinta da Colina Verde</p>
-      </div>
-
-      <div class="transport-note">Organizaremos transporte para quem precisar, preencha sua necessidade no formulário de
-        confirmação de presença.</div>
-
-      <div class="map-container">
-        <h4>Sinagoga</h4>
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3092.9869640810147!2d-8.419265423474018!3d39.60576680349213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd18b1b13a24487d%3A0x9c90c6f64f47ed72!2sSinagoga%20de%20Tomar!5e0!3m2!1spt-PT!2spt!4v1729364173668!5m2!1spt-PT!2spt"
-          width="600" height="450" style="border:0; border-radius:10px;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
+        <div class="event-details">
+            <p><strong id="event_date">16 de março de 2026 - 10:30</strong></p>
+            <p id="event_bm_local"><strong id="event_bm_title">Bar Mitzvah: </strong>Sinagoga de Tomar</p>
+            <p id="event_wd_local"><strong id="event_wd_title">Comemoração e casamento: </strong>Quinta da Colina Verde
+            </p>
+        </div>
+        <p id="transport_note" class="transport-note">Organizaremos transporte para quem precisar, preencha sua
+            necessidade no formulário de
+            confirmação de presença.</p>
+        <div class="map-container">
+            <h4 id="event_bm_map_title">Sinagoga</h4>
+            <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3092.9869640810147!2d-8.419265423474018!3d39.60576680349213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd18b1b13a24487d%3A0x9c90c6f64f47ed72!2sSinagoga%20de%20Tomar!5e0!3m2!1spt-PT!2spt!4v1729364173668!5m2!1spt-PT!2spt"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
     </section>
 
-    <!-- Seção 4: Carrossel de vídeos -->
+    <!-- Seção 4: Galeria de vídeos -->
     <section class="carousel-section">
-      <h3>Galeria</h3>
-      <div class="video-carousel">
-        <iframe
-          src="https://www.youtube.com/embed/UucI-m1kbcw?autoplay=1&mute=1&loop=1&playlist=UucI-m1kbcw&controls=0&rel=0"
-          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-        </iframe>
-        <iframe
-          src="https://www.youtube.com/embed/SsyTEeU4eJ0?autoplay=1&mute=1&loop=1&playlist=SsyTEeU4eJ0&controls=0&rel=0"
-          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-        </iframe>
+        <div class="container">
+            <h2 id="videos_title"></h2>
+            <div class="video-gallery" id="video_gallery">
+            </div>
+            <h2 id="photos_title"></h2>
+            <div class="photo-gallery" id="photo_gallery">
+            </div>
+        </div>
 
-        <iframe
-          src="https://www.youtube.com/embed/Irewz2m2Dwo?autoplay=1&mute=1&loop=1&playlist=Irewz2m2Dwo&controls=0&rel=0"
-          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-        </iframe>
-      </div>
     </section>
 
     <!-- Seção 5: RSVP -->
     <section class="rsvp-section">
-      <p>Confirme sua presença</p>
-      <iframe
-        src="https://docs.google.com/forms/d/e/1FAIpQLSfVt8sdZf724AebWNagiQrXqxvzBu-2YNDnzgTeY8AvVx3b9A/viewform?embedded=true"
-        width="640" height="806" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+        <p>Confirme sua presença</p>
+        <iframe
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfVt8sdZf724AebWNagiQrXqxvzBu-2YNDnzgTeY8AvVx3b9A/viewform?embedded=true"
+                width="640" height="806" frameborder="0" marginheight="0" marginwidth="0">Carregando…
+        </iframe>
     </section>
-  </div>
+</div>
 
+<!-- Lista de presentes -->
 <section class="giftlist-section">
-  <h3>Lista de presentes</h3>
-  <img src="./public/assets/images/under_construction.png" alt="Obras" class="giftlist-image">
-  <p>Ups, a lista de presentes está em construção.</p>
-  <p>Ela estará disponível aqui mesmo em <strong>Dezembro</strong>.</p>
+    <h3>Lista de presentes</h3>
+    <img src="./public/assets/images/under_construction.png" alt="Obras" class="giftlist-image">
+    <p>Ups, a lista de presentes está em construção.</p>
+    <p>Ela estará disponível aqui mesmo em <strong>Dezembro</strong>.</p>
 </section>
 
-
-  <footer>
+<footer>
     <p class="credit">Desenvolvido com muito carinho por <strong>Júlia Fremder</strong></p>
-  </footer>
-</body>
+</footer>
 
+<script src="./script.js"></script>
+</body>
 </html>
