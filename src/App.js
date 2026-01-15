@@ -1,0 +1,74 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import './App.css';
+import InviteSection from './components/InviteSection';
+import InfoSection from './components/InfoSection';
+import CarouselSection from './components/CarouselSection';
+import YouTubeGallery from './components/YouTubeGallery';
+import RSVPSection from './components/RSVPSection';
+import GiftlistSection from './components/GiftlistSection';
+
+const App = () => {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getContent = useCallback(async () => 
+    await fetch('/content.json')
+      .then(response => response.json())
+      .then(result => {
+        setContent(result);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading JSON:', error);
+        setLoading(false);
+      }), []);
+
+  useEffect(() => {
+    getContent();
+  }, [getContent]);
+
+  if (loading) {
+    return <div className="container"><p>Carregando...</p></div>;
+  }
+
+  if (!content) {
+    return <div className="container"><p>Erro ao carregar o conteúdo</p></div>;
+  }
+
+  return (
+    <div className="container">
+      <InviteSection 
+        title={content.invite_bm_title}
+        name={content.invite_bm_name}
+        img={content.invite_bm_img}
+      />
+      
+      <img 
+        src={content.invite_divider.src} 
+        alt={content.invite_divider.alt}
+        className="invite-divider"
+      />
+      
+      <InviteSection 
+        title={content.invite_wd_title}
+        name={content.invite_wd_name}
+        img={content.invite_wd_img}
+      />
+      
+      <InfoSection />
+      
+      <CarouselSection 
+        videosTitle={content.videos_title}
+        photosTitle={content.photos_title}
+        videos={content.video_gallery}
+        photos={content.photo_gallery}
+      />
+      
+      <RSVPSection />
+      
+      <GiftlistSection />
+    </div>
+  );
+}
+
+export default App;
