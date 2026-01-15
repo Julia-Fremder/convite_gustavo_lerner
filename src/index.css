@@ -10,7 +10,7 @@
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Libre Baskerville';
     background-color: #f8f7f3;
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@ body {
 }
 
 /* Seções do convite */
-.invite-section > p {
+.invite-section>p {
     font-family: 'Marck Script', cursive;
     font-size: 38px;
     color: #58450a;
@@ -73,6 +73,7 @@ section {
         opacity: 0;
         transform: translateY(15px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -302,13 +303,336 @@ section {
     animation: fadeIn 2s ease-in-out;
 }
 
+/* Answer Form Section */
+.answer-form-section {
+    margin: 60px 0;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f7f3 0%, #ede8df 100%);
+    border-radius: 8px;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container.guests-form {
+    max-width: 700px;
+}
+
+.form-container h3 {
+    font-family: 'Allura', cursive;
+    font-size: 32px;
+    color: #BFA14A;
+    margin-bottom: 10px;
+    text-shadow: 0.5px 0.5px 1.5px #7B6A28;
+    text-align: center;
+}
+
+.form-container>p {
+    font-size: 18px;
+    color: #58450a;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #58450a;
+    font-size: 14px;
+    text-align: left;
+}
+
+.required {
+    color: #d9534f;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #BFA14A;
+    box-shadow: 0 0 5px rgba(191, 161, 74, 0.3);
+}
+
+.form-input:disabled,
+.form-select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.guests-section {
+    margin: 30px 0;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.guests-section h4 {
+    color: #58450a;
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.guest-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #BFA14A;
+    border-radius: 6px;
+    cursor: move;
+    transition: all 0.2s ease;
+}
+
+.guest-item:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.guest-item.dragging {
+    opacity: 0.5;
+    background-color: #e8e8e8;
+    transform: scale(0.98);
+}
+
+.guest-number {
+    color: #BFA14A;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.guest-form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.guest-form-group {
+    flex: 1;
+}
+
+.guest-form-group.name-group {
+    flex: 0 0 200px;
+}
+
+.guest-form-group.plate-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+.guest-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #58450a;
+    font-size: 14px;
+    text-align: left;
+}
+
+.plate-controls {
+    display: none;
+}
+
+.plate-controls .form-select {
+    flex: 1;
+}
+
+.plate-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 32px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 6px 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 35px;
+    height: 35px;
+    color: inherit;
+}
+
+.icon-button:hover:not(:disabled) {
+    transform: scale(1.2);
+}
+
+.icon-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.trash-button {
+    color: #d9534f;
+}
+
+.trash-button:hover:not(:disabled) {
+    color: #c9302c;
+}
+
+.add-button {
+    color: #BFA14A;
+}
+
+.add-button:hover:not(:disabled) {
+    color: #a58a3a;
+}
+
+.add-guest-plus {
+    color: #BFA14A;
+}
+
+.add-guest-plus:hover:not(:disabled) {
+    color: #a58a3a;
+}
+
+.add-guest-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.remove-guest-button {
+    display: none;
+}
+
+.add-guest-button {
+    display: none;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 20px 0;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-guest-button:hover:not(:disabled) {
+    background-color: #4cae4c;
+}
+
+.add-guest-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.radio-group {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #58450a;
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #BFA14A;
+}
+
+.radio-label input[type="radio"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.radio-label span {
+    flex: 1;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 20px;
+    background-color: #BFA14A;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-shadow: 0.5px 0.5px 1px #7B6A28;
+}
+
+.submit-button:hover:not(:disabled) {
+    background-color: #a89642;
+}
+
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     h2 {
         font-size: 42px;
     }
 
-    .invite-section > p {
+    .invite-section>p {
         font-size: 28px;
     }
 
@@ -326,5 +650,48 @@ section {
 
     .giftlist-section h3 {
         font-size: 32px;
+    }
+
+    /* Guest form responsive */
+    .guest-form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .guest-form-group.name-group {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .guest-form-group.plate-group {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .guest-form-group label {
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .form-input,
+    .form-select {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .guest-form-row > .icon-button {
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+
+    .icon-button {
+        min-width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .form-container.guests-form {
+        max-width: 100%;
+        padding: 20px;
     }
 }

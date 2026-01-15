@@ -20,6 +20,24 @@
   "invite_wd_name": "Fabio & Júlia",
   "videos_title": "Guga sendo Guga",
   "photos_title": "Os noivos...",
+  "plate_options": [
+    {
+      "value": "creme_de_legumes",
+      "label": "Crianças que não comem os outros pratos podem pedir creme de legumes"
+    },
+    {
+      "value": "peixe",
+      "label": "Supremo de salmão com ervas e alho, batata assada e espinafres"
+    },
+    {
+      "value": "carne",
+      "label": "Miminhos de novilho com cogumelos frescos, arroz branco e legumes salteados"
+    },
+    {
+      "value": "vegetariano",
+      "label": "Tagliatelle com legumes e cogumelos frescos salteados"
+    }
+  ],
   "youtube_links": [
     {
       "url": "https://www.youtube.com/watch?v=Irewz2m2Dwo&list=PLF5vw7gjASWBv-XQ9aBaAi3A5rbbnYt9k&index=3",
