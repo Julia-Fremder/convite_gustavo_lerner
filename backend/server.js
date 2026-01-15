@@ -1,85 +1,177 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
-const { createObjectCsvWriter } = require('csv-writer');
 const { v4: uuidv4 } = require('uuid');
+const {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+  PutObjectCommand,
+} = require('@aws-sdk/client-s3');
+
+const BUCKET = process.env.S3_BUCKET_NAME;
+const REGION = process.env.S3_REGION || 'us-east-1';
+const S3_ENDPOINT = process.env.S3_ENDPOINT;
+const FORCE_PATH_STYLE = process.env.S3_FORCE_PATH_STYLE === 'true';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const DATA_DIR = path.join(__dirname, 'data');
+// S3 client
+const s3 = new S3Client({
+  region: REGION,
+  endpoint: S3_ENDPOINT,
+  forcePathStyle: FORCE_PATH_STYLE || undefined,
+  credentials: process.env.AWS_ACCESS_KEY_ID
+    ? {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      }
+    : undefined,
+});
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
+// Helpers
+const requireBucket = () => {
+  if (!BUCKET) {
+    throw new Error('S3_BUCKET_NAME is not configured');
+  }
+  return BUCKET;
+};
+
+const streamToString = async (stream) => {
+  if (!stream) return '';
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks).toString('utf-8');
+};
+
+const escapeCsv = (value) => {
+  const str = value === undefined || value === null ? '' : String(value);
+  if (str.includes('"')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  if (str.includes(',') || str.includes('\n')) {
+    return `"${str}"`;
+  }
+  return str;
+};
 
 /**
  * Get the latest CSV file in the data directory
  */
-const getLatestCsvFile = () => {
-  if (!fs.existsSync(DATA_DIR)) return null;
-  
-  const files = fs.readdirSync(DATA_DIR)
-    .filter(file => file.endsWith('.csv'))
-    .sort((a, b) => {
-      const statA = fs.statSync(path.join(DATA_DIR, a));
-      const statB = fs.statSync(path.join(DATA_DIR, b));
-      return statB.mtime - statA.mtime; // Most recent first
-    });
-  
-  return files.length > 0 ? files[0] : null;
+const getLatestCsvFile = async () => {
+  const bucket = requireBucket();
+  const resp = await s3.send(
+    new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: 'data_',
+    })
+  );
+
+  const items = resp.Contents || [];
+  const sorted = items
+    .filter((obj) => obj.Key && obj.Key.endsWith('.csv'))
+    .sort((a, b) => (b.LastModified || 0) - (a.LastModified || 0));
+
+  return sorted.length > 0 ? sorted[0].Key : null;
 };
 
 /**
  * Create a new CSV file if it doesn't exist, or get the latest one
  */
-const ensureCsvFile = () => {
-  const latestFile = getLatestCsvFile();
-  
-  if (latestFile) {
-    return path.join(DATA_DIR, latestFile);
-  }
-  
-  // Create new CSV file with timestamp
+const ensureCsvKey = async () => {
+  const latestKey = await getLatestCsvFile();
+  if (latestKey) return latestKey;
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-  const fileName = `data_${timestamp}.csv`;
-  return path.join(DATA_DIR, fileName);
+  return `data_${timestamp}.csv`;
+};
+
+const fetchCsv = async (key) => {
+  const bucket = requireBucket();
+  try {
+    const resp = await s3.send(
+      new GetObjectCommand({ Bucket: bucket, Key: key })
+    );
+    const body = await streamToString(resp.Body);
+    return body;
+  } catch (err) {
+    if (err.name === 'NoSuchKey') return null;
+    throw err;
+  }
 };
 
 /**
  * Append data to CSV file
  */
 const appendToCSV = async (data) => {
-  const csvPath = ensureCsvFile();
-  
-  // Add timestamp and unique ID to data
+  const bucket = requireBucket();
+  const key = await ensureCsvKey();
+
   const dataWithMeta = {
     id: uuidv4(),
     timestamp: new Date().toISOString(),
-    ...data
+    ...data,
   };
-  
-  // Check if file exists and has content
-  const fileExists = fs.existsSync(csvPath);
-  const headers = Object.keys(dataWithMeta);
-  
-  const csvWriter = createObjectCsvWriter({
-    path: csvPath,
-    header: headers.map(header => ({ id: header, title: header })),
-    append: fileExists,
-    encoding: 'utf8'
-  });
-  
-  await csvWriter.writeRecords([dataWithMeta]);
-  
-  return { success: true, file: path.basename(csvPath), data: dataWithMeta };
+
+  const existingCsv = await fetchCsv(key);
+
+  let headers = Object.keys(dataWithMeta);
+  let rows = [];
+
+  if (existingCsv) {
+    const lines = existingCsv.split('\n').filter((l) => l.trim() !== '');
+    if (lines.length > 0) {
+      const existingHeaders = lines[0].split(',');
+      headers = Array.from(new Set([...existingHeaders, ...headers]));
+      rows = lines.slice(1).map((line) => {
+        const values = line.split(',');
+        return headers.reduce((acc, h, idx) => {
+          acc[h] = values[idx] || '';
+          return acc;
+        }, {});
+      });
+    }
+  }
+
+  // Normalize rows to the combined headers
+  const normalizedRows = rows.map((row) =>
+    headers.reduce((acc, h) => {
+      acc[h] = row[h] || '';
+      return acc;
+    }, {})
+  );
+
+  const newRow = headers.reduce((acc, h) => {
+    acc[h] = dataWithMeta[h] || '';
+    return acc;
+  }, {});
+
+  const csvLines = [
+    headers.join(','),
+    ...normalizedRows.map((row) =>
+      headers.map((h) => escapeCsv(row[h])).join(',')
+    ),
+    headers.map((h) => escapeCsv(newRow[h])).join(','),
+  ].join('\n');
+
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: csvLines,
+      ContentType: 'text/csv',
+    })
+  );
+
+  return { success: true, file: key, data: dataWithMeta };
 };
 
 /**
@@ -117,33 +209,30 @@ app.post('/api/save-data', async (req, res) => {
 /**
  * GET endpoint to list all CSV files
  */
-app.get('/api/files', (req, res) => {
+app.get('/api/files', async (req, res) => {
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      return res.json({ files: [] });
-    }
-    
-    const files = fs.readdirSync(DATA_DIR)
-      .filter(file => file.endsWith('.csv'))
-      .map(file => {
-        const filePath = path.join(DATA_DIR, file);
-        const stats = fs.statSync(filePath);
-        return {
-          name: file,
-          size: stats.size,
-          created: stats.birthtime,
-          modified: stats.mtime
-        };
-      })
-      .sort((a, b) => b.modified - a.modified);
-    
+    const bucket = requireBucket();
+    const resp = await s3.send(
+      new ListObjectsV2Command({ Bucket: bucket, Prefix: 'data_' })
+    );
+
+    const files = (resp.Contents || [])
+      .filter((obj) => obj.Key && obj.Key.endsWith('.csv'))
+      .map((obj) => ({
+        name: obj.Key,
+        size: obj.Size || 0,
+        created: obj.LastModified || null,
+        modified: obj.LastModified || null,
+      }))
+      .sort((a, b) => new Date(b.modified) - new Date(a.modified));
+
     res.json({ files });
   } catch (error) {
     console.error('Error listing files:', error);
     res.status(500).json({
       success: false,
       error: 'Error listing files',
-      details: error.message
+      details: error.message,
     });
   }
 });
@@ -151,27 +240,31 @@ app.get('/api/files', (req, res) => {
 /**
  * GET endpoint to download a specific CSV file
  */
-app.get('/api/download/:fileName', (req, res) => {
+app.get('/api/download/:fileName', async (req, res) => {
   try {
+    const bucket = requireBucket();
     const { fileName } = req.params;
-    const filePath = path.join(DATA_DIR, fileName);
-    
-    // Security: prevent directory traversal
-    if (!filePath.startsWith(DATA_DIR)) {
-      return res.status(403).json({ error: 'Access denied' });
+
+    const resp = await s3.send(
+      new GetObjectCommand({ Bucket: bucket, Key: fileName })
+    );
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+    if (resp.Body && resp.Body.pipe) {
+      resp.Body.pipe(res);
+    } else {
+      const buffer = await streamToString(resp.Body);
+      res.send(buffer);
     }
-    
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found' });
-    }
-    
-    res.download(filePath);
   } catch (error) {
     console.error('Error downloading file:', error);
-    res.status(500).json({
+    const status = error.name === 'NoSuchKey' ? 404 : 500;
+    res.status(status).json({
       success: false,
-      error: 'Error downloading file',
-      details: error.message
+      error: status === 404 ? 'File not found' : 'Error downloading file',
+      details: error.message,
     });
   }
 });
@@ -179,9 +272,9 @@ app.get('/api/download/:fileName', (req, res) => {
 /**
  * GET endpoint to get the latest CSV file
  */
-app.get('/api/latest', (req, res) => {
+app.get('/api/latest', async (req, res) => {
   try {
-    const latestFile = getLatestCsvFile();
+    const latestFile = await getLatestCsvFile();
     
     if (!latestFile) {
       return res.json({
@@ -191,8 +284,8 @@ app.get('/api/latest', (req, res) => {
     }
     
     res.json({
-      file: latestFile,
-      path: `/api/download/${latestFile}`
+        file: latestFile,
+        path: `/api/download/${latestFile}`
     });
   } catch (error) {
     console.error('Error getting latest file:', error);
@@ -211,14 +304,17 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    latestFile: getLatestCsvFile()
+    bucket: BUCKET || null
   });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-  console.log(`📁 Data directory: ${DATA_DIR}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🪣 S3 bucket: ${BUCKET || 'not configured'}`);
+  console.log(`📍 S3 region: ${REGION}`);
+  console.log(`🔑 AWS credentials: ${process.env.AWS_ACCESS_KEY_ID ? 'configured' : 'not configured'}`);
+  console.log(`🌐 S3 endpoint: ${S3_ENDPOINT || 'default (AWS)'}`);
   console.log(`\nAvailable endpoints:`);
   console.log(`  POST   /api/save-data      - Save data to CSV`);
   console.log(`  GET    /api/files          - List all CSV files`);

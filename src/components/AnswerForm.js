@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { MdDelete, MdAdd } from 'react-icons/md';
 import useLocalStorage from '../hooks/useLocalStorage';
 import useForm from '../hooks/useForm';
@@ -28,53 +28,54 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
   const { mainName, guests } = form.values;
 
-  const updateMainName = (name) => {
-    form.setFieldValue('mainName', name);
-    setStoredMainName(name);
-  };
+  // Sync form values to localStorage
+  useEffect(() => {
+    setStoredMainName(mainName);
+    setStoredGuests(guests);
+  }, [mainName, guests, setStoredMainName, setStoredGuests]);
 
-  const updateGuests = (newGuests) => {
-    form.setFieldValue('guests', newGuests);
-    setStoredGuests(newGuests);
-  };
-
-  const handleMainNameChange = (e) => {
+  const handleMainNameChange = useCallback((e) => {
     const name = e.target.value;
-    updateMainName(name);
+    // Update main name through form
+    form.handleChange(e);
     // Update first guest name if it hasn't been customized
     if (guests.length > 0 && (guests[0].name === '' || guests[0].name === mainName)) {
       const updatedGuests = [...guests];
       updatedGuests[0].name = name;
-      updateGuests(updatedGuests);
+      form.setFieldValue('guests', updatedGuests);
     }
-  };
+  }, [mainName, guests, form]);
 
-  const handleGuestChange = (id, field, value) => {
-    updateGuests(guests.map(guest =>
+  const handleGuestChange = useCallback((id, field, value) => {
+    const updatedGuests = guests.map(guest =>
       guest.id === id ? { ...guest, [field]: value } : guest
-    ));
-  };
+    );
+    form.setFieldValue('guests', updatedGuests);
+  }, [guests, form]);
 
   const openAgeCheckModal = () => {
     setShowAgeModal(true);
   };
 
-  const handleAgeCheckConfirm = (isUnder10) => {
+  const handleAgeCheckConfirm = useCallback((isUnder10) => {
     const newId = guests.length;
-    updateGuests([...guests, { id: newId, name: '', plate: '', isChild: isUnder10 }]);
+    const updatedGuests = [...guests, { id: newId, name: '', plate: '', isChild: isUnder10 }];
+    form.setFieldValue('guests', updatedGuests);
     setShowAgeModal(false);
-  };
+  }, [guests, form]);
 
   const addGuest = () => {
     openAgeCheckModal();
   };
 
   const removeGuest = (id) => {
-    updateGuests(guests.filter(guest => guest.id !== id));
+    const updatedGuests = guests.filter(guest => guest.id !== id);
+    form.setFieldValue('guests', updatedGuests);
   };
 
   const onSubmit = async (values) => {
     const { mainName: name, guests: guestsList } = values;
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
     
     const validation = validateForm(name, guestsList);
     if (!validation.isValid) {
@@ -90,7 +91,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
       const responses = await Promise.all(
         guestsList.map((guest) => {
           const price = guest.isChild ? 'child' : 'adult';
-          return fetch('http://localhost:5000/api/save-data', {
+          return fetch(`${apiBaseUrl}/api/save-data`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -116,8 +117,8 @@ const AnswerForm = ({ plateOptions = [] }) => {
       setMessageType('success');
       setMessage(`✓ Dados salvos com sucesso! ${guestsList.length} convidado(s) registrado(s).`);
       form.resetForm();
-      updateMainName('');
-      updateGuests([{ id: 1, name: '', plate: '', isChild: false }]);
+      form.setFieldValue('mainName', '');
+      form.setFieldValue('guests', [{ id: 1, name: '', plate: '', isChild: false }]);
     } catch (error) {
       setMessageType('error');
       setMessage(`Erro de conexão: ${error.message}`);
@@ -133,9 +134,10 @@ const AnswerForm = ({ plateOptions = [] }) => {
         
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="form-group">
-            <label htmlFor="mainName">Nome <span className="required">*</span></label>
+            <label htmlFor="mainName">Nome{' '}<span className="required">*</span></label>
             <input
               id="mainName"
+              name="mainName"
               type="text"
               value={mainName}
               onChange={handleMainNameChange}
@@ -166,7 +168,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
                     <label htmlFor={`guest-name-${guest.id}`}>
                       {guest.isChild
                         ? 'Nome da criança com menos de 10 anos'
-                        : 'Nome'}
+                        : 'Nome'}{' '}
                       <span className="required">*</span>
                     </label>
                     <input

@@ -22,20 +22,20 @@
   "photos_title": "Os noivos...",
   "plate_options": [
     {
-      "value": "creme_de_legumes",
-      "label": "Crianças que não comem os outros pratos podem pedir creme de legumes"
+      "value": "carne",
+      "label": "Miminhos de novilho com cogumelos frescos, arroz branco e legumes salteados"
     },
     {
       "value": "peixe",
       "label": "Supremo de salmão com ervas e alho, batata assada e espinafres"
     },
     {
-      "value": "carne",
-      "label": "Miminhos de novilho com cogumelos frescos, arroz branco e legumes salteados"
-    },
-    {
       "value": "vegetariano",
       "label": "Tagliatelle com legumes e cogumelos frescos salteados"
+    },
+    {
+      "value": "creme_de_legumes",
+      "label": "Crianças que não comem os outros pratos podem pedir creme de legumes"
     }
   ],
   "youtube_links": [

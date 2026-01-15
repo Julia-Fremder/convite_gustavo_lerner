@@ -13,19 +13,19 @@ npm install
 npm start
 ```
 
-The server will run on `http://localhost:5000`
+The server will run on `http://localhost:5000` by default. In the frontend, set `REACT_APP_API_BASE_URL` to your deployed backend URL (defaults to `http://localhost:5000`).
 
 ## Endpoints Available
 
-- **POST** `http://localhost:5000/api/save-data` - Send JSON data, it gets saved to CSV
-- **GET** `http://localhost:5000/api/health` - Check server status
-- **GET** `http://localhost:5000/api/files` - List all CSV files
-- **GET** `http://localhost:5000/api/latest` - Get the latest CSV file info
+- **POST** `${REACT_APP_API_BASE_URL}/api/save-data` - Send JSON data, it gets saved to CSV
+- **GET** `${REACT_APP_API_BASE_URL}/api/health` - Check server status
+- **GET** `${REACT_APP_API_BASE_URL}/api/files` - List all CSV files
+- **GET** `${REACT_APP_API_BASE_URL}/api/latest` - Get the latest CSV file info
 
 ## Example: Send data from frontend
 
 ```javascript
-const response = await fetch('http://localhost:5000/api/save-data', {
+const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || ''}/api/save-data`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ name: 'John', email: 'john@example.com' })

@@ -25,7 +25,7 @@ npm install
 npm start
 ```
 
-The server will run on `http://localhost:5000`
+The server will run on `http://localhost:5000` by default. From the frontend, configure `REACT_APP_API_BASE_URL` to point at your deployed backend (defaults to `http://localhost:5000`).
 
 For development with auto-reload:
 ```bash
@@ -116,7 +116,8 @@ To send data from your React app to this backend:
 ```javascript
 const sendData = async (data) => {
   try {
-    const response = await fetch('http://localhost:5000/api/save-data', {
+    const apiBase = process.env.REACT_APP_API_BASE_URL || '';
+    const response = await fetch(`${apiBase}/api/save-data`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -136,18 +137,20 @@ const sendData = async (data) => {
 
 ```bash
 # Save data
-curl -X POST http://localhost:5000/api/save-data \
+API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:5000}
+
+curl -X POST "$API_BASE_URL/api/save-data" \
   -H "Content-Type: application/json" \
   -d '{"name": "John", "email": "john@example.com"}'
 
 # List files
-curl http://localhost:5000/api/files
+curl "$API_BASE_URL/api/files"
 
 # Get latest file
-curl http://localhost:5000/api/latest
+curl "$API_BASE_URL/api/latest"
 
 # Health check
-curl http://localhost:5000/api/health
+curl "$API_BASE_URL/api/health"
 ```
 
 ## File Naming

@@ -27,7 +27,8 @@ const AgeCheckModal = ({ isOpen, onClose, onConfirm }) => {
         </div>
         
         <div className="modal-body">
-          <p>O convidado terá 10 anos ou menos no dia 16/03/26?</p>
+            <h3>ATENÇÃO</h3>
+          <p>É criança e terá 10 anos ou menos no dia 16/03/26?</p>
         </div>
 
         <div className="modal-footer">
