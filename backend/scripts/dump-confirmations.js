@@ -61,6 +61,12 @@ const ensureSchema = async (client) => {
       ) INTO has_data_column;
 
       IF has_data_column THEN
+        BEGIN
+          ALTER TABLE confirmations ALTER COLUMN data DROP NOT NULL;
+        EXCEPTION
+          WHEN undefined_column THEN NULL;
+        END;
+
         UPDATE confirmations
         SET raw_data = data
         WHERE raw_data IS NULL;

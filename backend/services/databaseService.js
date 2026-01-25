@@ -64,6 +64,24 @@ const initializeDatabase = async () => {
         ADD COLUMN IF NOT EXISTS raw_data JSONB;
     `);
 
+    // If legacy data column exists and is NOT NULL, make it nullable to avoid insert errors
+    await client.query(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'confirmations' AND column_name = 'data'
+        ) THEN
+          BEGIN
+            ALTER TABLE confirmations ALTER COLUMN data DROP NOT NULL;
+          EXCEPTION
+            WHEN undefined_column THEN NULL;
+          END;
+        END IF;
+      END
+      $$;
+    `);
+
     // Add a simple check constraint for price values (idempotent)
     await client.query(`
       DO $$
