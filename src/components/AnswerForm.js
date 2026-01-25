@@ -14,8 +14,9 @@ import {
 const AnswerForm = ({ plateOptions = [] }) => {
   const [storedMainName, setStoredMainName] = useLocalStorage('answerForm_mainName', '');
   const [storedGuests, setStoredGuests] = useLocalStorage('answerForm_guests', [
-    { id: 1, name: '', plate: '', isChild: false }
+    { id: 1, name: '', plate: 'peixe', isChild: false }
   ]);
+  const [lastSubmission, setLastSubmission] = useLocalStorage('answerForm_lastSubmission', null);
   const [message, setMessage] = React.useState('');
   const [messageType, setMessageType] = React.useState('');
   const [draggedId, setDraggedId] = React.useState(null);
@@ -34,6 +35,28 @@ const AnswerForm = ({ plateOptions = [] }) => {
     setStoredMainName(mainName);
     setStoredGuests(guests);
   }, [mainName, guests, setStoredMainName, setStoredGuests]);
+
+  // Normalize guests: default plate to 'peixe' if missing so the dropdown is preselected
+  useEffect(() => {
+    const needsDefault = guests.some((guest) => !guest.plate);
+    if (needsDefault) {
+      const updated = guests.map((guest) =>
+        guest.plate ? guest : { ...guest, plate: 'peixe' }
+      );
+      form.setFieldValue('guests', updated);
+    }
+  }, [guests, form]);
+
+  // Auto-clear success message after 1 minute
+  useEffect(() => {
+    if (messageType === 'success') {
+      const timer = setTimeout(() => {
+        setMessage('');
+        setMessageType('');
+      }, 60000); // 1 minute
+      return () => clearTimeout(timer);
+    }
+  }, [messageType]);
 
   const handleMainNameChange = useCallback((e) => {
     const name = e.target.value;
@@ -60,7 +83,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
   const handleAgeCheckConfirm = useCallback((isUnder10) => {
     const newId = guests.length;
-    const updatedGuests = [...guests, { id: newId, name: '', plate: '', isChild: isUnder10 }];
+    const updatedGuests = [...guests, { id: newId, name: '', plate: 'peixe', isChild: isUnder10 }];
     form.setFieldValue('guests', updatedGuests);
     setShowAgeModal(false);
   }, [guests, form]);
@@ -135,7 +158,14 @@ const AnswerForm = ({ plateOptions = [] }) => {
       setMessageType('success');
       setMessage(`✓ Dados salvos com sucesso! ${guestsList.length} convidado(s) registrado(s).`);
 
-      const clearedGuests = [{ id: 1, name: '', plate: '', isChild: false }];
+      // Save last submission
+      setLastSubmission({
+        name,
+        guests: guestsList,
+        timestamp: new Date().toISOString(),
+      });
+
+      const clearedGuests = [{ id: 1, name: '', plate: 'peixe', isChild: false }];
       form.setValues({ mainName: '', guests: clearedGuests });
       setStoredMainName('');
       setStoredGuests(clearedGuests);
@@ -213,7 +243,6 @@ const AnswerForm = ({ plateOptions = [] }) => {
                       disabled={form.isSubmitting}
                       className="form-select"
                     >
-                      <option value="">-- Selecione um prato --</option>
                       {plateOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
@@ -273,6 +302,28 @@ const AnswerForm = ({ plateOptions = [] }) => {
         {message && (
           <div className={`message message-${messageType}`}>
             {message}
+          </div>
+        )}
+
+        {lastSubmission && (
+          <div className="last-submission-section">
+            <p className="last-submission-title">Última resposta submetida</p>
+            <p className="last-submission-date">
+              {new Date(lastSubmission.timestamp).toLocaleString('pt-BR')}
+            </p>
+            <div className="last-submission-details">
+              <p><strong>{lastSubmission.name}</strong></p>
+              <ul>
+                {lastSubmission.guests.map((guest, idx) => (
+                  <li key={idx}>
+                    {guest.name} — {guest.plate} {guest.isChild ? '(criança)' : '(adulto)'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="submission-note">
+              *No caso de múltiplas respostas salvas será considerada a mais recente.
+            </p>
           </div>
         )}
       </div>

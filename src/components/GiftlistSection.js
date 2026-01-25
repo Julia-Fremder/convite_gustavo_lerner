@@ -114,7 +114,6 @@ const GiftlistSection = () => {
     const items = selectedEur.length ? selectedEur : selectedBrl;
     if (!items.length) return;
 
-    setShowConfirmModal(false);
     if (selectedEur.length) {
       await handleMbway(items);
     } else {
@@ -141,17 +140,19 @@ const GiftlistSection = () => {
       <div className="gift-card__body">
         <h4>{gift.title}</h4>
         {gift.description && <p className="gift-card__desc">{gift.description}</p>}
-        <p className="gift-card__price">
-          {currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
-        </p>
-        <button
-          type="button"
-          className="gift-card__btn"
-          onClick={() => toggleSelect(gift, currency)}
-          disabled={disabled || isProcessing}
-        >
-          {isSelected ? 'Selecionado' : disabled ? 'Indisponível' : 'Selecionar'}
-        </button>
+        <div className="gift-card__footer">
+          <p className="gift-card__price">
+            {currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
+          </p>
+          <input
+            type="checkbox"
+            className="gift-card__checkbox"
+            checked={isSelected}
+            onChange={() => toggleSelect(gift, currency)}
+            disabled={disabled || isProcessing}
+            title={disabled ? 'Indisponível (outro grupo selecionado)' : ''}
+          />
+        </div>
       </div>
     </div>
   );
@@ -165,56 +166,60 @@ const GiftlistSection = () => {
       <p><strong>Lembrem de deixar uma msg no detalhe do pix ou mbWay!!!</strong></p>
       <p>Ou enviem mensagem para mensagens.2026.03.16@gmail.com</p>
 
-      <div className="giftlist-subsection">
-        <h3>Opção Portugal (EUR / MBWay)</h3>
-        <div className="gift-card-grid">
-          {presentsEur.map((gift) =>
-            renderGiftCard(
-              gift,
-              !!selectedEur.find((g) => g.id === gift.id),
-              brlDisabled,
-              'EUR'
-            )
-          )}
+      <div className="giftlist-container">
+        <div className="giftlist-subsection">
+          <h3>Opção Portugal (EUR / MBWay)</h3>
+          <div className="gift-card-grid">
+            {presentsEur.map((gift) =>
+              renderGiftCard(
+                gift,
+                !!selectedEur.find((g) => g.id === gift.id),
+                brlDisabled,
+                'EUR'
+              )
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="giftlist-subsection">
-        <h3>Opção Brasil (BRL / PIX)</h3>
-        <div className="gift-card-grid">
-          {presentsBrl.map((gift) =>
-            renderGiftCard(
-              gift,
-              !!selectedBrl.find((g) => g.id === gift.id),
-              eurDisabled,
-              'BRL'
-            )
-          )}
-        </div>
-      </div>
+        <div className="giftlist-divider"></div>
 
-      <div className="giftlist-actions">
-        <div>
-          <strong>Selecionados:</strong> {selectedEur.length + selectedBrl.length} | Total:{' '}
-          {selectedEur.length ? '€' : selectedBrl.length ? 'R$' : ''} {totalSelected.toFixed(2)}
+        <div className="giftlist-subsection">
+          <h3>Opção Brasil (BRL / PIX)</h3>
+          <div className="gift-card-grid">
+            {presentsBrl.map((gift) =>
+              renderGiftCard(
+                gift,
+                !!selectedBrl.find((g) => g.id === gift.id),
+                eurDisabled,
+                'BRL'
+              )
+            )}
+          </div>
         </div>
-        <div className="giftlist-action-buttons">
-          <button
-            type="button"
-            className="giftlist-btn secondary"
-            onClick={clearSelections}
-            disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
-          >
-            Limpar seleção
-          </button>
-          <button
-            type="button"
-            className="giftlist-btn primary"
-            onClick={handleOpenConfirm}
-            disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
-          >
-            Gerar pagamento
-          </button>
+
+        <div className="giftlist-footer">
+          <div className="giftlist-summary">
+            <strong>Selecionados:</strong> {selectedEur.length + selectedBrl.length} | Total:{' '}
+            {selectedEur.length ? '€' : selectedBrl.length ? 'R$' : ''} {totalSelected.toFixed(2)}
+          </div>
+          <div className="giftlist-footer-actions">
+            <button
+              type="button"
+              className="giftlist-btn secondary"
+              onClick={clearSelections}
+              disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+            >
+              Limpar seleção
+            </button>
+            <button
+              type="button"
+              className="giftlist-btn primary pagar-btn"
+              onClick={handleOpenConfirm}
+              disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+            >
+              Pagar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -269,7 +274,7 @@ const GiftlistSection = () => {
                 onClick={() => setShowConfirmModal(false)}
                 disabled={isProcessing}
               >
-                Continuar escolhendo
+                Cancelar
               </button>
               <button
                 type="button"
@@ -277,7 +282,45 @@ const GiftlistSection = () => {
                 onClick={handleConfirmPayment}
                 disabled={isProcessing}
               >
-                Confirmar pagamento
+                {isProcessing ? 'Gerando...' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {paymentResult && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h4>{paymentResult.method} gerado</h4>
+            <div className="payment-details">
+              <p><strong>Itens:</strong> {paymentResult.title}</p>
+              <p><strong>Valor:</strong> {paymentResult.method === 'MBWay' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
+              {paymentResult.phone && <p><strong>Telefone:</strong> {paymentResult.phone}</p>}
+              {paymentResult.txId && <p><strong>ID Transação:</strong> {paymentResult.txId}</p>}
+            </div>
+            {paymentResult.qrCode && (
+              <div className="payment-qr">
+                <p>Escaneie o código QR:</p>
+                <img src={paymentResult.qrCode} alt={`QR para ${paymentResult.method}`} />
+              </div>
+            )}
+            {paymentResult.payload && (
+              <div className="payment-payload">
+                <p><strong>Payload:</strong></p>
+                <code>{paymentResult.payload}</code>
+              </div>
+            )}
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={() => {
+                  setPaymentResult(null);
+                  clearSelections();
+                }}
+              >
+                Fechar
               </button>
             </div>
           </div>

@@ -3,7 +3,6 @@ import './App.css';
 import InviteSection from './components/InviteSection';
 import InfoSection from './components/InfoSection';
 import CarouselSection from './components/CarouselSection';
-import RSVPSection from './components/RSVPSection';
 import AnswerForm from './components/AnswerForm';
 import GiftlistSection from './components/GiftlistSection';
 
@@ -63,7 +62,7 @@ const App = () => {
         photos={content.photo_gallery}
       />
       
-      <RSVPSection />
+      {/* RSVPSection component kept but not used - using AnswerForm instead */}
 
       <InfoSection />
 
