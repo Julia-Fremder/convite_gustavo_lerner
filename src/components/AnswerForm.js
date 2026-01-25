@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MdDelete, MdAdd } from 'react-icons/md';
 import useLocalStorage from '../hooks/useLocalStorage';
 import useForm from '../hooks/useForm';
 import AgeCheckModal from './AgeCheckModal';
+import './AnswerForm.css';
+import '../components/Modal.css';
 import {
   handleDragStart,
   handleDragOver,
@@ -12,7 +14,7 @@ import {
 } from '../utils/formHelpers';
 
 const AnswerForm = ({ plateOptions = [] }) => {
-  const [storedMainName, setStoredMainName] = useLocalStorage('answerForm_mainName', '');
+  const [storedEmail, setStoredEmail] = useLocalStorage('answerForm_email', '');
   const [storedGuests, setStoredGuests] = useLocalStorage('answerForm_guests', [
     { id: 1, name: '', plate: 'peixe', isChild: false }
   ]);
@@ -22,19 +24,22 @@ const AnswerForm = ({ plateOptions = [] }) => {
   const [draggedId, setDraggedId] = React.useState(null);
   const [showAgeModal, setShowAgeModal] = React.useState(false);
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const form = useForm({
-    mainName: storedMainName,
+    mainEmail: storedEmail,
     guests: storedGuests,
   });
 
-  const { mainName, guests } = form.values;
+  const { mainEmail, guests } = form.values;
 
   // Sync form values to localStorage
   useEffect(() => {
-    setStoredMainName(mainName);
-    setStoredGuests(guests);
-  }, [mainName, guests, setStoredMainName, setStoredGuests]);
+    setStoredEmail(mainEmail);
+    if (!hasSubmitted) {
+      setStoredGuests(guests);
+    }
+  }, [hasSubmitted, mainEmail, guests, setStoredEmail, setStoredGuests]);
 
   // Normalize guests: default plate to 'peixe' if missing so the dropdown is preselected
   useEffect(() => {
@@ -58,24 +63,52 @@ const AnswerForm = ({ plateOptions = [] }) => {
     }
   }, [messageType]);
 
-  const handleMainNameChange = useCallback((e) => {
-    const name = e.target.value;
-    // Update main name through form
+  useEffect(() => {
+    const email = form.values.mainEmail?.trim();
+    if (!email) return;
+
+    const controller = new AbortController();
+    const fetchLatest = async () => {
+      try {
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
+        const params = new URLSearchParams({ email });
+        const response = await fetch(`${apiBaseUrl}/api/confirmations?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const data = await response.json();
+        if (data?.success && Array.isArray(data.confirmations)) {
+          const mappedGuests = data.confirmations.map((row) => ({
+            name: row.guest,
+            plate: row.plate_option,
+            isChild: row.price === 'child',
+          }));
+          setLastSubmission({
+            email,
+            guests: mappedGuests,
+            timestamp: data.timestamp || data.confirmations[0]?.submitted_at || new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        // ignore fetch errors
+      }
+    };
+
+    fetchLatest();
+    return () => controller.abort();
+  }, [form.values.mainEmail, setLastSubmission]);
+
+  const handleEmailChange = useCallback((e) => {
+    if (hasSubmitted) setHasSubmitted(false);
     form.handleChange(e);
-    // Update first guest name if it hasn't been customized
-    if (guests.length > 0 && (guests[0].name === '' || guests[0].name === mainName)) {
-      const updatedGuests = [...guests];
-      updatedGuests[0].name = name;
-      form.setFieldValue('guests', updatedGuests);
-    }
-  }, [mainName, guests, form]);
+  }, [form, hasSubmitted]);
 
   const handleGuestChange = useCallback((id, field, value) => {
+    if (hasSubmitted) setHasSubmitted(false);
     const updatedGuests = guests.map(guest =>
       guest.id === id ? { ...guest, [field]: value } : guest
     );
     form.setFieldValue('guests', updatedGuests);
-  }, [guests, form]);
+  }, [guests, form, hasSubmitted]);
 
   const openAgeCheckModal = () => {
     setShowAgeModal(true);
@@ -86,24 +119,27 @@ const AnswerForm = ({ plateOptions = [] }) => {
     const updatedGuests = [...guests, { id: newId, name: '', plate: 'peixe', isChild: isUnder10 }];
     form.setFieldValue('guests', updatedGuests);
     setShowAgeModal(false);
-  }, [guests, form]);
+    if (hasSubmitted) setHasSubmitted(false);
+  }, [guests, form, hasSubmitted]);
 
   const addGuest = () => {
+    if (hasSubmitted) setHasSubmitted(false);
     openAgeCheckModal();
   };
 
   const removeGuest = (id) => {
+    if (hasSubmitted) setHasSubmitted(false);
     const updatedGuests = guests.filter(guest => guest.id !== id);
     form.setFieldValue('guests', updatedGuests);
   };
 
   const handleOpenConfirm = (e) => {
     e.preventDefault();
-    const { mainName: name, guests: guestsList } = form.values;
-    const validation = validateForm(name, guestsList);
+    const { mainEmail: email, guests: guestsList } = form.values;
+    const validation = validateForm(email, guestsList);
 
     if (!validation.isValid) {
-      form.setFieldError('mainName', validation.error);
+      form.setFieldError('mainEmail', validation.error);
       setMessageType('error');
       setMessage(validation.error);
       return;
@@ -115,12 +151,12 @@ const AnswerForm = ({ plateOptions = [] }) => {
   };
 
   const onSubmit = async (values) => {
-    const { mainName: name, guests: guestsList } = values;
+    const { mainEmail: email, guests: guestsList } = values;
     const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
     
-    const validation = validateForm(name, guestsList);
+    const validation = validateForm(email, guestsList);
     if (!validation.isValid) {
-      form.setFieldError('mainName', validation.error);
+      form.setFieldError('mainEmail', validation.error);
       setMessageType('error');
       setMessage(validation.error);
       return;
@@ -138,7 +174,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              Name: name,
+              Email: email,
               Guest: guest.name,
               PlateOption: guest.plate,
               Price: price,
@@ -155,20 +191,34 @@ const AnswerForm = ({ plateOptions = [] }) => {
         return;
       }
 
+      const submitTimestamp = responses[0]?.timestamp || new Date().toISOString();
+
       setMessageType('success');
       setMessage(`✓ Dados salvos com sucesso! ${guestsList.length} convidado(s) registrado(s).`);
 
-      // Save last submission
-      setLastSubmission({
-        name,
-        guests: guestsList,
-        timestamp: new Date().toISOString(),
-      });
-
       const clearedGuests = [{ id: 1, name: '', plate: 'peixe', isChild: false }];
-      form.setValues({ mainName: '', guests: clearedGuests });
-      setStoredMainName('');
+      form.setValues({ mainEmail: email, guests: clearedGuests });
+      setStoredEmail(email);
       setStoredGuests(clearedGuests);
+      setHasSubmitted(true);
+
+      const params = new URLSearchParams({ email, timestamp: submitTimestamp });
+      const response = await fetch(`${apiBaseUrl}/api/confirmations?${params.toString()}`);
+      const data = await response.json();
+      if (data?.success && Array.isArray(data.confirmations)) {
+        const mappedGuests = data.confirmations.map((row) => ({
+          name: row.guest,
+          plate: row.plate_option,
+          isChild: row.price === 'child',
+        }));
+        setLastSubmission({
+          email,
+          guests: mappedGuests,
+          timestamp: data.timestamp || submitTimestamp,
+        });
+      } else {
+        setLastSubmission({ email, guests: guestsList, timestamp: submitTimestamp });
+      }
     } catch (error) {
       setMessageType('error');
       setMessage(`Erro de conexão: ${error.message}`);
@@ -184,14 +234,14 @@ const AnswerForm = ({ plateOptions = [] }) => {
         
         <form onSubmit={handleOpenConfirm}>
           <div className="form-group">
-            <label htmlFor="mainName">Nome{' '}<span className="required">*</span></label>
+            <label htmlFor="mainEmail">Email <span className="required">*</span></label>
             <input
-              id="mainName"
-              name="mainName"
-              type="text"
-              value={mainName}
-              onChange={handleMainNameChange}
-              placeholder="Seu nome"
+              id="mainEmail"
+              name="mainEmail"
+              type="email"
+              value={mainEmail}
+              onChange={handleEmailChange}
+              placeholder="seu@email.com"
               required
               disabled={form.isSubmitting}
               className="form-input"
@@ -208,7 +258,10 @@ const AnswerForm = ({ plateOptions = [] }) => {
                 draggable
                 onDragStart={(e) => handleDragStart(e, guest.id, setDraggedId)}
                 onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, draggedId, guest.id, guests, setStoredGuests, setDraggedId)}
+                onDrop={(e) => {
+                  if (hasSubmitted) setHasSubmitted(false);
+                  handleDrop(e, draggedId, guest.id, guests, setStoredGuests, setDraggedId);
+                }}
                 onDragEnd={() => handleDragEnd(setDraggedId)}
               >
                 <div className="guest-number">Convidado {index + 1}</div>
@@ -312,7 +365,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
               {new Date(lastSubmission.timestamp).toLocaleString('pt-BR')}
             </p>
             <div className="last-submission-details">
-              <p><strong>{lastSubmission.name}</strong></p>
+              <p><strong>{lastSubmission.email || lastSubmission.name}</strong></p>
               <ul>
                 {lastSubmission.guests.map((guest, idx) => (
                   <li key={idx}>
@@ -338,7 +391,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
         <div className="modal-overlay">
           <div className="modal-card">
             <h4>Confirmar envio</h4>
-            <p><strong>Nome:</strong> {mainName}</p>
+            <p><strong>Email:</strong> {mainEmail}</p>
             <div className="confirm-guests">
               <strong>Convidados:</strong>
               <ul>

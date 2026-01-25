@@ -5,10 +5,12 @@ import InfoSection from './components/InfoSection';
 import CarouselSection from './components/CarouselSection';
 import AnswerForm from './components/AnswerForm';
 import GiftlistSection from './components/GiftlistSection';
+import PaymentsPage from './components/PaymentsPage';
 
 const App = () => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isPaymentsRoute = window.location.pathname === '/payments';
 
   const getContent = useCallback(async () => 
     await fetch('/content.json')
@@ -23,8 +25,18 @@ const App = () => {
       }), []);
 
   useEffect(() => {
-    getContent();
-  }, [getContent]);
+    if (!isPaymentsRoute) {
+      getContent();
+    }
+  }, [getContent, isPaymentsRoute]);
+
+  if (isPaymentsRoute) {
+    return (
+      <div className="container">
+        <PaymentsPage />
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="container"><p>Carregando...</p></div>;

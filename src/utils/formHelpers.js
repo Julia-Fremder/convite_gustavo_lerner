@@ -29,11 +29,19 @@ export const handleDragEnd = (setDraggedId) => {
   setDraggedId(null);
 };
 
-export const validateForm = (mainName, guests) => {
-  if (!mainName.trim()) {
+export const validateForm = (email, guests) => {
+  const emailTrimmed = email.trim();
+  if (!emailTrimmed) {
     return {
       isValid: false,
-      error: 'Por favor, preencha o nome',
+      error: 'Por favor, preencha o email',
+    };
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
+    return {
+      isValid: false,
+      error: 'Informe um email válido',
     };
   }
 
@@ -41,7 +49,7 @@ export const validateForm = (mainName, guests) => {
   if (invalidGuests.length > 0) {
     return {
       isValid: false,
-      error: 'Por favor, preencha o nome e escolha um prato para cada convidados',
+      error: 'Por favor, preencha o nome e escolha um prato para cada convidado',
     };
   }
 

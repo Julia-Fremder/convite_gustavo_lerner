@@ -1,0 +1,299 @@
+/* GiftlistSection Component Styles */
+
+.giftlist-section {
+    margin: 60px 0;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f7f3 0%, #ede8df 100%);
+}
+
+.giftlist-section h3 {
+    font-family: 'Libre Baskerville', serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: #3a321f;
+    margin: 20px 0;
+    text-shadow: none;
+}
+
+.giftlist-section p {
+    font-size: 18px;
+    color: #58450a;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.giftlist-section strong {
+    color: #BFA14A;
+    font-size: 19px;
+}
+
+.giftlist-section img {
+    max-width: 200px;
+    object-fit: cover;
+    margin-top: 30px;
+    border-radius: 8px;
+}
+
+.giftlist-subsection {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+}
+
+.giftlist-subsection h3 {
+    font-family: 'Libre Baskerville', serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #3a321f;
+    margin-bottom: 15px;
+}
+
+.giftlist-subsection p {
+    font-size: 17px;
+    color: #58450a;
+}
+
+/* Gift Card Grid and Cards */
+.gift-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.gift-card {
+    background: #fff;
+    border: 1px solid #e9e2cf;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.gift-card--selected {
+    border-color: #4caf50;
+    box-shadow: 0 8px 18px rgba(76, 175, 80, 0.22);
+}
+
+.gift-card--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.gift-card__img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    background: #f5f2ea;
+}
+
+.gift-card__body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.gift-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.gift-card__header h4 {
+    flex: 1;
+    margin: 0;
+    font-size: 16px;
+    color: #3a321f;
+}
+
+.gift-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.gift-card__checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4caf50;
+    flex-shrink: 0;
+}
+
+.gift-card__checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.gift-card__desc {
+    font-size: 14px;
+    color: #6b5d3b;
+    margin: 6px 0 10px;
+}
+
+.gift-card__price {
+    font-weight: 700;
+    margin-bottom: 0;
+    color: #3a321f;
+    margin: 0;
+}
+
+/* Container and Divider */
+.giftlist-container {
+    border: 1px solid #e5dccf;
+    border-radius: 10px;
+    padding: 20px;
+    background: #fefdfb;
+    margin: 20px 0;
+}
+
+.giftlist-divider {
+    height: 1px;
+    background: #e5dccf;
+    margin: 20px 0;
+}
+
+/* Footer and Actions */
+.giftlist-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+}
+
+.giftlist-summary {
+    font-size: 14px;
+    color: #58450a;
+}
+
+.giftlist-footer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.giftlist-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #eee2c8;
+    border-radius: 10px;
+    background: #faf8f4;
+    margin: 10px 0 20px;
+}
+
+.giftlist-action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.giftlist-btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.giftlist-btn.primary {
+    background: #4caf50;
+    color: #fff;
+}
+
+.giftlist-btn.primary:hover:not(:disabled) {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+.giftlist-btn.secondary {
+    background: #f4f4f4;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.giftlist-btn.secondary:hover:not(:disabled) {
+    background: #efefef;
+}
+
+.giftlist-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagar-btn {
+    min-width: 120px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.giftlist-message {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.giftlist-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.giftlist-payment-result {
+    margin-top: 20px;
+    padding: 16px;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    color: #155724;
+}
+
+.giftlist-payment-result h4 {
+    margin-top: 0;
+    color: #155724;
+}
+
+.giftlist-payload {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+}
+
+.giftlist-payload p {
+    margin: 0 0 6px 0;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.giftlist-payload code {
+    display: block;
+    word-break: break-all;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+}
+
+.giftlist-qr {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.giftlist-qr img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}

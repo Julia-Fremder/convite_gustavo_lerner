@@ -28,3 +28,31 @@ export const requestMbwayPayment = async ({ amount, phone, description, txId }) 
 
   return handleResponse(response);
 };
+
+export const createPaymentRecord = async ({ email, amount, paymentType, message, description, txId, raw }) => {
+  const response = await fetch(`${apiBaseUrl}/api/payments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, amount, paymentType, message, description, txId, raw }),
+  });
+
+  return handleResponse(response);
+};
+
+export const fetchPayments = async (params = {}) => {
+  const search = new URLSearchParams();
+  if (params.email) search.set('email', params.email);
+  const query = search.toString();
+  const response = await fetch(`${apiBaseUrl}/api/payments${query ? `?${query}` : ''}`);
+  return handleResponse(response);
+};
+
+export const updatePaymentStatus = async (id, { status, message }) => {
+  const response = await fetch(`${apiBaseUrl}/api/payments/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, message }),
+  });
+
+  return handleResponse(response);
+};

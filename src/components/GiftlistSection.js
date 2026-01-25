@@ -1,6 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import useContent from '../hooks/useContent';
-import { requestPixPayment, requestMbwayPayment } from '../utils/paymentService';
+import useLocalStorage from '../hooks/useLocalStorage';
+import { requestPixPayment, requestMbwayPayment, createPaymentRecord, fetchPayments } from '../utils/paymentService';
+import './GiftlistSection.css';
+import '../components/Modal.css';
 
 const GiftlistSection = () => {
   const { content, loading, error } = useContent();
@@ -9,13 +12,59 @@ const GiftlistSection = () => {
   const [paymentResult, setPaymentResult] = useState(null);
   const [selectedEur, setSelectedEur] = useState([]);
   const [selectedBrl, setSelectedBrl] = useState([]);
+  const [eurDisabled, setEurDisabled] = useState(false);
+  const [brlDisabled, setBrlDisabled] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [userPhone, setUserPhone] = useState('');
+  const [storedEmail, setStoredEmail] = useLocalStorage('giftlist_email', '');
+  const [userEmail, setUserEmail] = useState(storedEmail || '');
+  const [userMessage, setUserMessage] = useState('');
+  const [userPayments, setUserPayments] = useState([]);
 
   const presentsEur = content?.presents_eur || [];
   const presentsBrl = content?.presents_brl || [];
 
-  const eurDisabled = selectedBrl.length > 0;
-  const brlDisabled = selectedEur.length > 0;
+  useEffect(() => {
+    setEurDisabled(selectedBrl.length > 0);
+    setBrlDisabled(selectedEur.length > 0);
+  }, [selectedBrl, selectedEur]);
+
+  useEffect(() => {
+    if (userEmail) return;
+    try {
+      const saved = window.localStorage.getItem('answerForm_email');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed) {
+          setUserEmail(parsed);
+          setStoredEmail(parsed);
+        }
+      }
+    } catch (err) {
+      // ignore
+    }
+  }, [userEmail, setStoredEmail]);
+
+  useEffect(() => {
+    setStoredEmail(userEmail || '');
+  }, [userEmail, setStoredEmail]);
+
+  const refreshUserPayments = useCallback(async (email) => {
+    if (!email) return;
+    try {
+      const { payments } = await fetchPayments({ email });
+      setUserPayments(payments || []);
+    } catch (err) {
+      // non-blocking
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userEmail) {
+      refreshUserPayments(userEmail);
+    }
+  }, [userEmail, refreshUserPayments]);
 
   const totalSelected = useMemo(() => {
     const list = selectedEur.length ? selectedEur : selectedBrl;
@@ -51,9 +100,28 @@ const GiftlistSection = () => {
     setSelectedBrl([]);
     setPaymentResult(null);
     setMessage('');
+    setEurDisabled(false);
+    setBrlDisabled(false);
   };
 
-  const handleMbway = async (items) => {
+  const registerPayment = async ({ method, amount, description, txId, items, phone, userPhoneNotification }) => {
+    try {
+      await createPaymentRecord({
+        email: userEmail.trim(),
+        amount,
+        paymentType: method,
+        message: userMessage || undefined,
+        description,
+        txId,
+        raw: { items, phone, userPhoneNotification },
+      });
+    } catch (err) {
+      // Surface a warning but do not block user from seeing the payment data
+      setMessage(err.message || 'Pagamento gerado, mas não foi possível registrar no banco.');
+    }
+  };
+
+  const handleMbway = async (items, userPhoneNotification = null) => {
     try {
       setIsProcessing(true);
       setMessage('');
@@ -61,7 +129,7 @@ const GiftlistSection = () => {
 
       const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
       const desc = items.map((i) => i.title).join(' | ');
-      const phone = items[0]?.phone;
+      const phone = items[0]?.phone; // Payment destination (from gift item)
 
       const result = await requestMbwayPayment({
         amount: total,
@@ -70,7 +138,25 @@ const GiftlistSection = () => {
         txId: `MBW-${items.length}-${Date.now()}`,
       });
 
-      setPaymentResult({ method: 'MBWay', title: desc, amount: total, phone, ...result });
+      await registerPayment({
+        method: 'MBWay',
+        amount: total,
+        description: desc,
+        txId: result.txId,
+        items,
+        phone,
+        userPhoneNotification,
+      });
+
+      setPaymentResult({ 
+        method: 'MBWay', 
+        title: desc, 
+        amount: total, 
+        phone,
+        userPhone: userPhoneNotification,
+        ...result 
+      });
+      refreshUserPayments(userEmail);
     } catch (err) {
       setMessage(err.message || 'Erro ao gerar pagamento MBWay');
     } finally {
@@ -93,7 +179,16 @@ const GiftlistSection = () => {
         txId: `PIX-${items.length}-${Date.now()}`,
       });
 
+      await registerPayment({
+        method: 'PIX',
+        amount: total,
+        description: desc,
+        txId: result.txId,
+        items,
+      });
+
       setPaymentResult({ method: 'PIX', title: desc, amount: total, ...result });
+      refreshUserPayments(userEmail);
     } catch (err) {
       setMessage(err.message || 'Erro ao gerar pagamento PIX');
     } finally {
@@ -106,6 +201,10 @@ const GiftlistSection = () => {
       setMessage('Selecione ao menos um presente.');
       return;
     }
+    if (!userEmail.trim()) {
+      setMessage('Informe um email para gerar o pagamento.');
+      return;
+    }
     setMessage('');
     setShowConfirmModal(true);
   };
@@ -115,10 +214,22 @@ const GiftlistSection = () => {
     if (!items.length) return;
 
     if (selectedEur.length) {
-      await handleMbway(items);
+      setShowConfirmModal(false);
+      setShowPhoneModal(true);
     } else {
       await handlePix(items);
     }
+  };
+
+  const handlePhoneSubmit = async () => {
+    if (!userPhone.trim()) {
+      setMessage('Por favor, insira um número de telefone.');
+      return;
+    }
+    setShowPhoneModal(false);
+    const items = selectedEur.length ? selectedEur : selectedBrl;
+    await handleMbway(items, userPhone);
+    setUserPhone('');
   };
 
   if (loading) {
@@ -174,7 +285,7 @@ const GiftlistSection = () => {
               renderGiftCard(
                 gift,
                 !!selectedEur.find((g) => g.id === gift.id),
-                brlDisabled,
+                eurDisabled,
                 'EUR'
               )
             )}
@@ -190,7 +301,7 @@ const GiftlistSection = () => {
               renderGiftCard(
                 gift,
                 !!selectedBrl.find((g) => g.id === gift.id),
-                eurDisabled,
+                brlDisabled,
                 'BRL'
               )
             )}
@@ -245,6 +356,68 @@ const GiftlistSection = () => {
         </div>
       )}
 
+      {userEmail && userPayments.length > 0 && (
+        <div className="giftlist-payment-result" style={{ marginTop: '20px' }}>
+          <h4>Pagamentos para {userEmail}</h4>
+          <ul style={{ textAlign: 'left', paddingLeft: '18px', color: '#58450a' }}>
+            {userPayments.map((p) => (
+              <li key={p.id} style={{ marginBottom: '8px' }}>
+                <strong>{p.payment_type}</strong> — {Number(p.amount).toFixed(2)} ({p.status})
+                {p.description ? ` • ${p.description}` : ''}
+                {p.created_at ? ` • ${new Date(p.created_at).toLocaleString('pt-BR')}` : ''}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {userPayments
+        .filter((p) => p.status === 'received')
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .map((p) => (
+          <div
+            key={p.id}
+            className="giftlist-confirmed-section"
+            style={{
+              marginTop: '30px',
+              padding: '30px 20px',
+              background: 'linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%)',
+              borderRadius: '8px',
+              border: '2px solid #4caf50',
+              boxShadow: '0 6px 16px rgba(76, 175, 80, 0.15)',
+            }}
+          >
+            <h3 style={{ color: '#2d5a2d', marginBottom: '16px', textAlign: 'center', fontSize: '24px' }}>
+              Presente Confirmado
+            </h3>
+            <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', borderLeft: '6px solid #4caf50' }}>
+              <p style={{ margin: '0 0 12px 0', fontWeight: '700', color: '#2d5a2d', fontSize: '18px' }}>
+                {p.payment_type}
+              </p>
+              <p style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#58450a' }}>
+                <strong>Valor:</strong> {Number(p.amount).toFixed(2)}
+              </p>
+              {p.description && (
+                <p style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#666' }}>
+                  <strong>Presente:</strong> {p.description}
+                </p>
+              )}
+              {p.message && (
+                <div style={{ background: '#faf8f4', padding: '16px', borderRadius: '6px', borderLeft: '4px solid #BFA14A', marginBottom: '12px' }}>
+                  <p style={{ margin: '0', fontSize: '15px', color: '#58450a', fontStyle: 'italic' }}>
+                    "{p.message}"
+                  </p>
+                </div>
+              )}
+              {p.created_at && (
+                <p style={{ margin: '0', fontSize: '13px', color: '#999' }}>
+                  Confirmado em: {new Date(p.created_at).toLocaleString('pt-BR')}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+
       <img
         src="/assets/images/obrigado.gif"
         alt="obrigado"
@@ -266,6 +439,46 @@ const GiftlistSection = () => {
               <p style={{ marginTop: '10px' }}>
                 <strong>Total:</strong> {selectedEur.length ? '€' : 'R$'} {totalSelected.toFixed(2)}
               </p>
+            </div>
+            <div style={{ marginBottom: '12px', display: 'grid', gap: '10px' }}>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Email (obrigatório)</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="seu@email.com"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  disabled={isProcessing}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    fontSize: '14px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Mensagem (opcional)</label>
+                <textarea
+                  placeholder="Mensagem para identificarmos o presente"
+                  value={userMessage}
+                  onChange={(e) => setUserMessage(e.target.value)}
+                  disabled={isProcessing}
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    fontSize: '14px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                  }}
+                />
+              </div>
             </div>
             <div className="modal-actions">
               <button
@@ -289,6 +502,55 @@ const GiftlistSection = () => {
         </div>
       )}
 
+      {showPhoneModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h4>Insira seu número de telefone</h4>
+            <p style={{ marginBottom: '16px', color: '#666' }}>
+              Receberá a notificação do pagamento MBWay neste número
+            </p>
+            <div style={{ marginBottom: '16px' }}>
+              <input
+                type="tel"
+                placeholder="Ex: +351 912345678 ou 912345678"
+                value={userPhone}
+                onChange={(e) => setUserPhone(e.target.value)}
+                disabled={isProcessing}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '14px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-button secondary"
+                onClick={() => {
+                  setShowPhoneModal(false);
+                  setShowConfirmModal(true);
+                }}
+                disabled={isProcessing}
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={handlePhoneSubmit}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Gerando...' : 'Gerar Pagamento'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {paymentResult && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -296,7 +558,8 @@ const GiftlistSection = () => {
             <div className="payment-details">
               <p><strong>Itens:</strong> {paymentResult.title}</p>
               <p><strong>Valor:</strong> {paymentResult.method === 'MBWay' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
-              {paymentResult.phone && <p><strong>Telefone:</strong> {paymentResult.phone}</p>}
+              {paymentResult.phone && <p><strong>Telefone Destino:</strong> {paymentResult.phone}</p>}
+              {paymentResult.userPhone && <p><strong>Notificação em:</strong> {paymentResult.userPhone}</p>}
               {paymentResult.txId && <p><strong>ID Transação:</strong> {paymentResult.txId}</p>}
             </div>
             {paymentResult.qrCode && (
