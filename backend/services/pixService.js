@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const PIX_KEY = process.env.PIX_KEY || '04355073700';
 const PIX_MERCHANT_NAME = process.env.PIX_MERCHANT_NAME || 'JULIA FREMDER';
-const PIX_MERCHANT_CITY = process.env.PIX_MERCHANT_CITY || 'SAO PAULO';
+const PIX_MERCHANT_CITY = process.env.PIX_MERCHANT_CITY || 'RIO DE JANEIRO';
 
 const toAscii = (value, maxLen) => {
   if (!value) return '';
@@ -41,7 +41,7 @@ const calculateCRC16 = (payload) => {
 
 const buildPixPayload = ({ amount, txId, description }) => {
   const merchantName = toAscii(PIX_MERCHANT_NAME, 25) || 'JULIA FREMDER';
-  const merchantCity = toAscii(PIX_MERCHANT_CITY, 15) || 'SAO PAULO';
+  const merchantCity = toAscii(PIX_MERCHANT_CITY, 15) || 'RIO DE JANEIRO';
   const desc = description ? toAscii(description, 50) : '';
   const txid = toAscii(txId || `PIX-${uuidv4().slice(0, 8)}`, 25) || 'PIX';
   const amountStr = Number(amount).toFixed(2);
