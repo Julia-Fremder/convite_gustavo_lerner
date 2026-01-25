@@ -4,7 +4,7 @@
   "description": "Backend API for saving form data to CSV",
   "main": "server.js",
   "scripts": {
-    "start": "npm install && node server.js",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "author": "",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import useContent from '../hooks/useContent';
 import { requestPixPayment, requestMbwayPayment } from '../utils/paymentService';
 
@@ -7,24 +7,70 @@ const GiftlistSection = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
   const [paymentResult, setPaymentResult] = useState(null);
+  const [selectedEur, setSelectedEur] = useState([]);
+  const [selectedBrl, setSelectedBrl] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const presentsEur = content?.presents_eur || [];
   const presentsBrl = content?.presents_brl || [];
 
-  const handleMbway = async (gift) => {
+  const eurDisabled = selectedBrl.length > 0;
+  const brlDisabled = selectedEur.length > 0;
+
+  const totalSelected = useMemo(() => {
+    const list = selectedEur.length ? selectedEur : selectedBrl;
+    return list.reduce((sum, item) => sum + Number(item.price || 0), 0);
+  }, [selectedEur, selectedBrl]);
+
+  const toggleSelect = (gift, currency) => {
+    if (currency === 'EUR' && eurDisabled) return;
+    if (currency === 'BRL' && brlDisabled) return;
+
+    if (currency === 'EUR') {
+      setSelectedEur((prev) =>
+        prev.find((g) => g.id === gift.id)
+          ? prev.filter((g) => g.id !== gift.id)
+          : [...prev, gift]
+      );
+      setSelectedBrl([]);
+    } else {
+      setSelectedBrl((prev) =>
+        prev.find((g) => g.id === gift.id)
+          ? prev.filter((g) => g.id !== gift.id)
+          : [...prev, gift]
+      );
+      setSelectedEur([]);
+    }
+
+    setPaymentResult(null);
+    setMessage('');
+  };
+
+  const clearSelections = () => {
+    setSelectedEur([]);
+    setSelectedBrl([]);
+    setPaymentResult(null);
+    setMessage('');
+  };
+
+  const handleMbway = async (items) => {
     try {
       setIsProcessing(true);
       setMessage('');
       setPaymentResult(null);
 
+      const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
+      const desc = items.map((i) => i.title).join(' | ');
+      const phone = items[0]?.phone;
+
       const result = await requestMbwayPayment({
-        amount: gift.price,
-        phone: gift.phone,
-        description: gift.title,
-        txId: `MBW-${gift.id}`,
+        amount: total,
+        phone,
+        description: desc,
+        txId: `MBW-${items.length}-${Date.now()}`,
       });
 
-      setPaymentResult({ method: 'MBWay', title: gift.title, ...result });
+      setPaymentResult({ method: 'MBWay', title: desc, amount: total, phone, ...result });
     } catch (err) {
       setMessage(err.message || 'Erro ao gerar pagamento MBWay');
     } finally {
@@ -32,23 +78,47 @@ const GiftlistSection = () => {
     }
   };
 
-  const handlePix = async (gift) => {
+  const handlePix = async (items) => {
     try {
       setIsProcessing(true);
       setMessage('');
       setPaymentResult(null);
 
+      const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
+      const desc = items.map((i) => i.title).join(' | ');
+
       const result = await requestPixPayment({
-        amount: gift.price,
-        description: gift.title,
-        txId: `PIX-${gift.id}`,
+        amount: total,
+        description: desc,
+        txId: `PIX-${items.length}-${Date.now()}`,
       });
 
-      setPaymentResult({ method: 'PIX', title: gift.title, ...result });
+      setPaymentResult({ method: 'PIX', title: desc, amount: total, ...result });
     } catch (err) {
       setMessage(err.message || 'Erro ao gerar pagamento PIX');
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleOpenConfirm = () => {
+    if (!selectedEur.length && !selectedBrl.length) {
+      setMessage('Selecione ao menos um presente.');
+      return;
+    }
+    setMessage('');
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmPayment = async () => {
+    const items = selectedEur.length ? selectedEur : selectedBrl;
+    if (!items.length) return;
+
+    setShowConfirmModal(false);
+    if (selectedEur.length) {
+      await handleMbway(items);
+    } else {
+      await handlePix(items);
     }
   };
 
@@ -60,8 +130,11 @@ const GiftlistSection = () => {
     return <p>Erro ao carregar presentes: {error}</p>;
   }
 
-  const renderGiftCard = (gift, actionLabel, onAction) => (
-    <div className="gift-card" key={gift.id}>
+  const renderGiftCard = (gift, isSelected, disabled, currency) => (
+    <div
+      className={`gift-card ${isSelected ? 'gift-card--selected' : ''} ${disabled ? 'gift-card--disabled' : ''}`}
+      key={gift.id}
+    >
       {gift.img && (
         <img src={gift.img} alt={gift.title} className="gift-card__img" />
       )}
@@ -69,15 +142,15 @@ const GiftlistSection = () => {
         <h4>{gift.title}</h4>
         {gift.description && <p className="gift-card__desc">{gift.description}</p>}
         <p className="gift-card__price">
-          {gift.currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
+          {currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
         </p>
         <button
           type="button"
           className="gift-card__btn"
-          onClick={() => onAction(gift)}
-          disabled={isProcessing}
+          onClick={() => toggleSelect(gift, currency)}
+          disabled={disabled || isProcessing}
         >
-          {isProcessing ? 'Gerando...' : actionLabel}
+          {isSelected ? 'Selecionado' : disabled ? 'Indisponível' : 'Selecionar'}
         </button>
       </div>
     </div>
@@ -95,14 +168,53 @@ const GiftlistSection = () => {
       <div className="giftlist-subsection">
         <h3>Opção Portugal (EUR / MBWay)</h3>
         <div className="gift-card-grid">
-          {presentsEur.map((gift) => renderGiftCard(gift, 'Pagar com MBWay', handleMbway))}
+          {presentsEur.map((gift) =>
+            renderGiftCard(
+              gift,
+              !!selectedEur.find((g) => g.id === gift.id),
+              brlDisabled,
+              'EUR'
+            )
+          )}
         </div>
       </div>
 
       <div className="giftlist-subsection">
         <h3>Opção Brasil (BRL / PIX)</h3>
         <div className="gift-card-grid">
-          {presentsBrl.map((gift) => renderGiftCard(gift, 'Pagar com PIX', handlePix))}
+          {presentsBrl.map((gift) =>
+            renderGiftCard(
+              gift,
+              !!selectedBrl.find((g) => g.id === gift.id),
+              eurDisabled,
+              'BRL'
+            )
+          )}
+        </div>
+      </div>
+
+      <div className="giftlist-actions">
+        <div>
+          <strong>Selecionados:</strong> {selectedEur.length + selectedBrl.length} | Total:{' '}
+          {selectedEur.length ? '€' : selectedBrl.length ? 'R$' : ''} {totalSelected.toFixed(2)}
+        </div>
+        <div className="giftlist-action-buttons">
+          <button
+            type="button"
+            className="giftlist-btn secondary"
+            onClick={clearSelections}
+            disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+          >
+            Limpar seleção
+          </button>
+          <button
+            type="button"
+            className="giftlist-btn primary"
+            onClick={handleOpenConfirm}
+            disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+          >
+            Gerar pagamento
+          </button>
         </div>
       </div>
 
@@ -132,6 +244,45 @@ const GiftlistSection = () => {
         src="/assets/images/obrigado.gif"
         alt="obrigado"
       />
+
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h4>Confirmar presentes</h4>
+            <div className="confirm-guests">
+              <strong>Itens selecionados:</strong>
+              <ul>
+                {(selectedEur.length ? selectedEur : selectedBrl).map((gift) => (
+                  <li key={gift.id}>
+                    {gift.title} — {gift.currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
+                  </li>
+                ))}
+              </ul>
+              <p style={{ marginTop: '10px' }}>
+                <strong>Total:</strong> {selectedEur.length ? '€' : 'R$'} {totalSelected.toFixed(2)}
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-button secondary"
+                onClick={() => setShowConfirmModal(false)}
+                disabled={isProcessing}
+              >
+                Continuar escolhendo
+              </button>
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={handleConfirmPayment}
+                disabled={isProcessing}
+              >
+                Confirmar pagamento
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
