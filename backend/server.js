@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { saveData } = require('./controllers/emailController');
+const { saveData } = require('./controllers/dataController');
 const { createPixPayment } = require('./controllers/pixController');
 const { createMbwayPayment } = require('./controllers/mbwayController');
 const { health } = require('./controllers/healthController');
