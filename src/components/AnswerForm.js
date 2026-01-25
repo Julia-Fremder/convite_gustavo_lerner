@@ -20,6 +20,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
   const [messageType, setMessageType] = React.useState('');
   const [draggedId, setDraggedId] = React.useState(null);
   const [showAgeModal, setShowAgeModal] = React.useState(false);
+  const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
   const form = useForm({
     mainName: storedMainName,
@@ -73,6 +74,23 @@ const AnswerForm = ({ plateOptions = [] }) => {
     form.setFieldValue('guests', updatedGuests);
   };
 
+  const handleOpenConfirm = (e) => {
+    e.preventDefault();
+    const { mainName: name, guests: guestsList } = form.values;
+    const validation = validateForm(name, guestsList);
+
+    if (!validation.isValid) {
+      form.setFieldError('mainName', validation.error);
+      setMessageType('error');
+      setMessage(validation.error);
+      return;
+    }
+
+    setMessage('');
+    setMessageType('');
+    setShowConfirmModal(true);
+  };
+
   const onSubmit = async (values) => {
     const { mainName: name, guests: guestsList } = values;
     const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
@@ -116,9 +134,11 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
       setMessageType('success');
       setMessage(`✓ Dados salvos com sucesso! ${guestsList.length} convidado(s) registrado(s).`);
-      form.resetForm();
-      form.setFieldValue('mainName', '');
-      form.setFieldValue('guests', [{ id: 1, name: '', plate: '', isChild: false }]);
+
+      const clearedGuests = [{ id: 1, name: '', plate: '', isChild: false }];
+      form.setValues({ mainName: '', guests: clearedGuests });
+      setStoredMainName('');
+      setStoredGuests(clearedGuests);
     } catch (error) {
       setMessageType('error');
       setMessage(`Erro de conexão: ${error.message}`);
@@ -132,7 +152,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
         <h3>Confirme sua presença</h3>
         <p>Preencha os dados dos convidados</p>
         
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={handleOpenConfirm}>
           <div className="form-group">
             <label htmlFor="mainName">Nome{' '}<span className="required">*</span></label>
             <input
@@ -262,6 +282,42 @@ const AnswerForm = ({ plateOptions = [] }) => {
         onClose={() => setShowAgeModal(false)}
         onConfirm={handleAgeCheckConfirm}
       />
+
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h4>Confirmar envio</h4>
+            <p><strong>Nome:</strong> {mainName}</p>
+            <div className="confirm-guests">
+              <strong>Convidados:</strong>
+              <ul>
+                {guests.map((guest, idx) => (
+                  <li key={guest.id}>
+                    #{idx + 1} {guest.name || '(sem nome)'} — {guest.plate || 'sem prato'} {guest.isChild ? '(criança)' : ''}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="modal-button secondary" onClick={() => setShowConfirmModal(false)}>
+                Continuar editando
+              </button>
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  const submit = form.handleSubmit(onSubmit);
+                  submit({ preventDefault: () => {} });
+                }}
+                disabled={form.isSubmitting}
+              >
+                Confirmar envio
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
