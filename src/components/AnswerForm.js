@@ -33,6 +33,11 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
   const { mainEmail, guests } = form.values;
 
+  const findPlateLabel = useCallback(
+    (plateValue) => plateOptions.find((opt) => opt.value === plateValue)?.label || plateValue || 'sem prato',
+    [plateOptions]
+  );
+
   // Sync form values to localStorage
   useEffect(() => {
     setStoredEmail(mainEmail);
@@ -229,7 +234,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
   return (
     <section className="answer-form-section">
       <div className="form-container guests-form">
-        <h3>Confirme sua presença</h3>
+        <h3>Selecione sua opção para o almoço</h3>
         <p>Preencha os dados dos convidados</p>
         
         <form onSubmit={handleOpenConfirm}>
@@ -369,7 +374,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
               <ul>
                 {lastSubmission.guests.map((guest, idx) => (
                   <li key={idx}>
-                    {guest.name} — {guest.plate} {guest.isChild ? '(criança)' : '(adulto)'}
+                    {guest.name} — {findPlateLabel(guest.plate)} {guest.isChild ? '(criança)' : '(adulto)'}
                   </li>
                 ))}
               </ul>
@@ -397,7 +402,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
               <ul>
                 {guests.map((guest, idx) => (
                   <li key={guest.id}>
-                    #{idx + 1} {guest.name || '(sem nome)'} — {guest.plate || 'sem prato'} {guest.isChild ? '(criança)' : ''}
+                    #{idx + 1} {guest.name || '(sem nome)'} — {findPlateLabel(guest.plate)} {guest.isChild ? '(criança)' : ''}
                   </li>
                 ))}
               </ul>

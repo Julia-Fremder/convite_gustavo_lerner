@@ -15,8 +15,6 @@ const GiftlistSection = () => {
   const [eurDisabled, setEurDisabled] = useState(false);
   const [brlDisabled, setBrlDisabled] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showPhoneModal, setShowPhoneModal] = useState(false);
-  const [userPhone, setUserPhone] = useState('');
   const [storedEmail, setStoredEmail] = useLocalStorage('giftlist_email', '');
   const [userEmail, setUserEmail] = useState(storedEmail || '');
   const [userMessage, setUserMessage] = useState('');
@@ -213,23 +211,12 @@ const GiftlistSection = () => {
     const items = selectedEur.length ? selectedEur : selectedBrl;
     if (!items.length) return;
 
+    setShowConfirmModal(false);
     if (selectedEur.length) {
-      setShowConfirmModal(false);
-      setShowPhoneModal(true);
+      await handleMbway(items);
     } else {
       await handlePix(items);
     }
-  };
-
-  const handlePhoneSubmit = async () => {
-    if (!userPhone.trim()) {
-      setMessage('Por favor, insira um número de telefone.');
-      return;
-    }
-    setShowPhoneModal(false);
-    const items = selectedEur.length ? selectedEur : selectedBrl;
-    await handleMbway(items, userPhone);
-    setUserPhone('');
   };
 
   if (loading) {
@@ -372,51 +359,64 @@ const GiftlistSection = () => {
       )}
 
       {userPayments
-        .filter((p) => p.status === 'received')
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .map((p) => (
-          <div
-            key={p.id}
-            className="giftlist-confirmed-section"
-            style={{
-              marginTop: '30px',
-              padding: '30px 20px',
-              background: 'linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%)',
-              borderRadius: '8px',
-              border: '2px solid #4caf50',
-              boxShadow: '0 6px 16px rgba(76, 175, 80, 0.15)',
-            }}
-          >
-            <h3 style={{ color: '#2d5a2d', marginBottom: '16px', textAlign: 'center', fontSize: '24px' }}>
-              Presente Confirmado
-            </h3>
-            <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', borderLeft: '6px solid #4caf50' }}>
-              <p style={{ margin: '0 0 12px 0', fontWeight: '700', color: '#2d5a2d', fontSize: '18px' }}>
-                {p.payment_type}
-              </p>
-              <p style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#58450a' }}>
-                <strong>Valor:</strong> {Number(p.amount).toFixed(2)}
-              </p>
-              {p.description && (
-                <p style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#666' }}>
-                  <strong>Presente:</strong> {p.description}
+        .map((p) => {
+          const isReceived = p.status === 'received';
+          const borderColor = isReceived ? '#4caf50' : '#f6c343';
+          const gradient = isReceived
+            ? 'linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%)'
+            : 'linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%)';
+          const headingColor = isReceived ? '#2d5a2d' : '#8a6d1a';
+          const statusLabel = isReceived ? 'Presente Confirmado' : 'Pagamento Pendente';
+          return (
+            <div
+              key={p.id}
+              className="giftlist-confirmed-section"
+              style={{
+                marginTop: '30px',
+                padding: '30px 20px',
+                background: gradient,
+                borderRadius: '8px',
+                border: `2px solid ${borderColor}`,
+                boxShadow: isReceived
+                  ? '0 6px 16px rgba(76, 175, 80, 0.15)'
+                  : '0 6px 16px rgba(246, 195, 67, 0.25)',
+              }}
+            >
+              <h3 style={{ color: headingColor, marginBottom: '16px', textAlign: 'center', fontSize: '24px' }}>
+                {statusLabel}
+              </h3>
+              <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', borderLeft: `6px solid ${borderColor}` }}>
+                <p style={{ margin: '0 0 12px 0', fontWeight: '700', color: headingColor, fontSize: '18px' }}>
+                  {p.payment_type}
                 </p>
-              )}
-              {p.message && (
-                <div style={{ background: '#faf8f4', padding: '16px', borderRadius: '6px', borderLeft: '4px solid #BFA14A', marginBottom: '12px' }}>
-                  <p style={{ margin: '0', fontSize: '15px', color: '#58450a', fontStyle: 'italic' }}>
-                    "{p.message}"
+                <p style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#58450a' }}>
+                  <strong>Valor:</strong> {Number(p.amount).toFixed(2)}
+                </p>
+                <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#777' }}>
+                  <strong>Status:</strong> {p.status}
+                </p>
+                {p.description && (
+                  <p style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#666' }}>
+                    <strong>Presente:</strong> {p.description}
                   </p>
-                </div>
-              )}
-              {p.created_at && (
-                <p style={{ margin: '0', fontSize: '13px', color: '#999' }}>
-                  Confirmado em: {new Date(p.created_at).toLocaleString('pt-BR')}
-                </p>
-              )}
+                )}
+                {p.message && (
+                  <div style={{ background: '#faf8f4', padding: '16px', borderRadius: '6px', borderLeft: '4px solid #BFA14A', marginBottom: '12px' }}>
+                    <p style={{ margin: '0', fontSize: '15px', color: '#58450a', fontStyle: 'italic' }}>
+                      "{p.message}"
+                    </p>
+                  </div>
+                )}
+                {p.created_at && (
+                  <p style={{ margin: '0', fontSize: '13px', color: '#999' }}>
+                    {isReceived ? 'Confirmado em' : 'Gerado em'}: {new Date(p.created_at).toLocaleString('pt-BR')}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
       <img
         src="/assets/images/obrigado.gif"
@@ -496,55 +496,6 @@ const GiftlistSection = () => {
                 disabled={isProcessing}
               >
                 {isProcessing ? 'Gerando...' : 'Confirmar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showPhoneModal && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <h4>Insira seu número de telefone</h4>
-            <p style={{ marginBottom: '16px', color: '#666' }}>
-              Receberá a notificação do pagamento MBWay neste número
-            </p>
-            <div style={{ marginBottom: '16px' }}>
-              <input
-                type="tel"
-                placeholder="Ex: +351 912345678 ou 912345678"
-                value={userPhone}
-                onChange={(e) => setUserPhone(e.target.value)}
-                disabled={isProcessing}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  fontSize: '14px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-            <div className="modal-actions">
-              <button
-                type="button"
-                className="modal-button secondary"
-                onClick={() => {
-                  setShowPhoneModal(false);
-                  setShowConfirmModal(true);
-                }}
-                disabled={isProcessing}
-              >
-                Voltar
-              </button>
-              <button
-                type="button"
-                className="modal-button primary"
-                onClick={handlePhoneSubmit}
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'Gerando...' : 'Gerar Pagamento'}
               </button>
             </div>
           </div>
