@@ -22,15 +22,16 @@ const initializeDatabase = async () => {
   const client = await getPool().connect();
   try {
     await client.query(`
-      CREATE TABLE IF NOT EXISTS submissions (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      CREATE TABLE IF NOT EXISTS confirmations (
+        id UUID PRIMARY KEY,
         data JSONB NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
-    console.log('Database table initialized');
+    console.log('✅ Database table initialized');
   } catch (error) {
     console.error('Error initializing database:', error);
+    throw error;
   } finally {
     client.release();
   }
@@ -43,7 +44,7 @@ const saveFormData = async (data) => {
   
   try {
     await client.query(
-      'INSERT INTO submissions (id, data) VALUES ($1, $2)',
+      'INSERT INTO confirmations (id, data) VALUES ($1, $2)',
       [id, JSON.stringify({ ...data, timestamp })]
     );
     return { id, timestamp };

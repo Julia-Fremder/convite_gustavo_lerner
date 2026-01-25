@@ -7,7 +7,7 @@ const { saveData } = require('./controllers/emailController');
 const { createPixPayment } = require('./controllers/pixController');
 const { createMbwayPayment } = require('./controllers/mbwayController');
 const { health } = require('./controllers/healthController');
-const { EMAIL_HOST, EMAIL_TO } = require('./services/emailService');
+const { initializeDatabase, DATABASE_URL } = require('./services/databaseService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,16 +23,25 @@ app.post('/api/pix', createPixPayment);
 app.post('/api/mbway', createMbwayPayment);
 app.get('/api/health', health);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`✉️  Email host: ${EMAIL_HOST || 'not configured'}`);
-  console.log(`📮 Email to: ${EMAIL_TO || 'not configured'}`);
-  console.log('\nAvailable endpoints:');
-  console.log('  POST   /api/save-data      - Forward form data via email');
-  console.log('  POST   /api/pix            - Generate PIX QR code payload');
-  console.log('  POST   /api/mbway          - Generate MBWay payment payload');
-  console.log('  GET    /api/health         - Health check (no external deps)');
-});
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    await initializeDatabase();
+  } catch (error) {
+    console.warn('Database initialization warning:', error.message);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Database: ${DATABASE_URL ? 'configured' : 'not configured'}`);
+    console.log('\nAvailable endpoints:');
+    console.log('  POST   /api/save-data      - Save form data to database');
+    console.log('  POST   /api/pix            - Generate PIX QR code payload');
+    console.log('  POST   /api/mbway          - Generate MBWay payment payload');
+    console.log('  GET    /api/health         - Health check (no external deps)');
+  });
+};
+
+startServer();
 
 module.exports = app;

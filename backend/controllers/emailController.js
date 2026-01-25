@@ -1,4 +1,4 @@
-const { sendFormEmail } = require('../services/emailService');
+const { saveFormData } = require('../services/databaseService');
 
 const saveData = async (req, res) => {
   try {
@@ -11,19 +11,19 @@ const saveData = async (req, res) => {
       });
     }
 
-    const meta = await sendFormEmail(data);
+    const meta = await saveFormData(data);
 
     res.status(200).json({
       success: true,
-      message: 'Data emailed successfully',
+      message: 'Data saved successfully',
       id: meta.id,
       timestamp: meta.timestamp,
     });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error saving data:', error);
     res.status(500).json({
       success: false,
-      error: 'Error sending email',
+      error: 'Error saving data',
       details: error.message,
     });
   }
