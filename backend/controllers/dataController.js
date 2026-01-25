@@ -1,4 +1,4 @@
-const { saveFormData } = require('../services/databaseService');
+const { saveFormData, getConfirmationsByEmail } = require('../services/databaseService');
 
 const saveData = async (req, res) => {
   try {
@@ -29,6 +29,24 @@ const saveData = async (req, res) => {
   }
 };
 
+const getConfirmations = async (req, res) => {
+  try {
+    const { email, timestamp } = req.query || {};
+
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    const { rows, timestamp: ts } = await getConfirmationsByEmail({ email, timestamp });
+
+    res.status(200).json({ success: true, confirmations: rows, timestamp: ts });
+  } catch (error) {
+    console.error('Error fetching confirmations:', error);
+    res.status(500).json({ success: false, error: 'Error fetching data', details: error.message });
+  }
+};
+
 module.exports = {
   saveData,
+  getConfirmations,
 };
