@@ -1,5 +1,8 @@
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const EMAIL_HOST = process.env.EMAIL_HOST;
 const EMAIL_PORT = Number(process.env.EMAIL_PORT) || 587;
