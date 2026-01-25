@@ -32,7 +32,7 @@ app.listen(PORT, () => {
   console.log('  POST   /api/save-data      - Forward form data via email');
   console.log('  POST   /api/pix            - Generate PIX QR code payload');
   console.log('  POST   /api/mbway          - Generate MBWay payment payload');
-  console.log('  GET    /api/health         - Health check and email verify');
+  console.log('  GET    /api/health         - Health check (no external deps)');
 });
 
 module.exports = app;

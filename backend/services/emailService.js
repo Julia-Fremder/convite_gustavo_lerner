@@ -12,18 +12,25 @@ const EMAIL_FROM = process.env.EMAIL_FROM || EMAIL_USER;
 const EMAIL_TO = process.env.EMAIL_TO;
 const EMAIL_SECURE = process.env.EMAIL_SECURE === 'true' || EMAIL_PORT === 465;
 
-const transporter = nodemailer.createTransport({
-  host: EMAIL_HOST,
-  port: EMAIL_PORT,
-  secure: EMAIL_SECURE,
-  auth:
-    EMAIL_USER && EMAIL_PASS
-      ? {
-          user: EMAIL_USER,
-          pass: EMAIL_PASS,
-        }
-      : undefined,
-});
+let transporter;
+
+const getTransporter = () => {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: EMAIL_HOST,
+      port: EMAIL_PORT,
+      secure: EMAIL_SECURE,
+      auth:
+        EMAIL_USER && EMAIL_PASS
+          ? {
+              user: EMAIL_USER,
+              pass: EMAIL_PASS,
+            }
+          : undefined,
+    });
+  }
+  return transporter;
+};
 
 const requireEmailConfig = () => {
   if (!EMAIL_HOST) throw new Error('EMAIL_HOST is not configured');
@@ -71,7 +78,9 @@ const sendFormEmail = async (data) => {
   const { text, html } = formatEmail(data, meta);
   const subjectName = data.Name || data.name || 'Guest';
 
-  await transporter.sendMail({
+  const tx = getTransporter();
+
+  await tx.sendMail({
     from: EMAIL_FROM,
     to: EMAIL_TO,
     subject: `New submission from ${subjectName}`,
@@ -86,7 +95,7 @@ const verifyEmail = async () => {
   if (!isEmailConfigured()) {
     throw new Error('Email settings are incomplete');
   }
-  return transporter.verify();
+  return getTransporter().verify();
 };
 
 module.exports = {
