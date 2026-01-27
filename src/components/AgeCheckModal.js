@@ -1,4 +1,3 @@
-import React from 'react';
 import './AgeCheckModal.css';
 
 const AgeCheckModal = ({ isOpen, onClose, onConfirm }) => {

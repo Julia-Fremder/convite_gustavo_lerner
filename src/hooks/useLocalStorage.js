@@ -1,46 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const useLocalStorage = (key, initialValue) => {
-  // State to store our value
-  const [storedValue, setStoredValue] = useState(() => {
+const STORAGE_KEY = 'userEmail';
+
+const useLocalStorage = () => {
+  // State to store the email
+  const [email, setEmail] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      if (item) {
-        return JSON.parse(item);
-      }
-      return initialValue;
+      const item = window.localStorage.getItem(STORAGE_KEY);
+      return item || '';
     } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
+      console.error('Error reading localStorage:', error);
+      return '';
     }
   });
 
-  // Return a wrapped version of useState's setter function that
-  // persists the new value to localStorage
-  const setValue = (value) => {
+  // Update localStorage whenever email changes
+  useEffect(() => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      if (valueToStore === undefined) {
-        window.localStorage.removeItem(key);
+      if (email && email.trim()) {
+        window.localStorage.setItem(STORAGE_KEY, email);
       } else {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        window.localStorage.removeItem(STORAGE_KEY);
       }
     } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
+      console.error('Error updating localStorage:', error);
     }
-  };
+  }, [email]);
 
-  const removeValue = () => {
-    try {
-      window.localStorage.removeItem(key);
-      setStoredValue(undefined);
-    } catch (error) {
-      console.error(`Error removing localStorage key "${key}":`, error);
-    }
-  };
-
-  return [storedValue, setValue, removeValue];
+  return [email, setEmail];
 };
 
 export default useLocalStorage;

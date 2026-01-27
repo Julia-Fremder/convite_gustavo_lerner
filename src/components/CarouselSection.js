@@ -1,4 +1,3 @@
-import React from 'react';
 import YouTubeGallery from './YouTubeGallery';
 
 const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLinks }) => {

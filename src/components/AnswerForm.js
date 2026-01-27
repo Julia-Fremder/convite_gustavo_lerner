@@ -1,61 +1,43 @@
+/* global setTimeout, clearTimeout, AbortController, process, URLSearchParams */
+
 import React, { useCallback, useEffect, useState } from 'react';
-import { MdDelete, MdAdd } from 'react-icons/md';
+import { MdDelete, MdAdd, MdClose } from 'react-icons/md';
 import useLocalStorage from '../hooks/useLocalStorage';
 import useForm from '../hooks/useForm';
-import AgeCheckModal from './AgeCheckModal';
 import './AnswerForm.css';
 import '../components/Modal.css';
-import {
-  handleDragStart,
-  handleDragOver,
-  handleDrop,
-  handleDragEnd,
-  validateForm,
-} from '../utils/formHelpers';
+import { validateForm } from '../utils/formHelpers';
+import { confirmationAPI } from '../services/apiClient';
 
 const AnswerForm = ({ plateOptions = [] }) => {
-  const [storedEmail, setStoredEmail] = useLocalStorage('answerForm_email', '');
-  const [storedGuests, setStoredGuests] = useLocalStorage('answerForm_guests', [
-    { id: 1, name: '', plate: 'peixe', isChild: false }
-  ]);
-  const [lastSubmission, setLastSubmission] = useLocalStorage('answerForm_lastSubmission', null);
+  const [storedEmail, setStoredEmail] = useLocalStorage();
+  const [lastSubmission, setLastSubmission] = useState(null);
   const [message, setMessage] = React.useState('');
   const [messageType, setMessageType] = React.useState('');
-  const [draggedId, setDraggedId] = React.useState(null);
   const [showAgeModal, setShowAgeModal] = React.useState(false);
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const form = useForm({
     mainEmail: storedEmail,
-    guests: storedGuests,
+    guests: [{ id: 1, name: '', plate: 'peixe', isChild: false }],
   });
 
   const { mainEmail, guests } = form.values;
 
   const findPlateLabel = useCallback(
-    (plateValue) => plateOptions.find((opt) => opt.value === plateValue)?.label || plateValue || 'sem prato',
+    (plateValue) => plateOptions.find((opt) => opt.value === plateValue)?.label || plateValue,
     [plateOptions]
   );
 
-  // Sync form values to localStorage
+  // Sync email to localStorage when it changes
   useEffect(() => {
     setStoredEmail(mainEmail);
-    if (!hasSubmitted) {
-      setStoredGuests(guests);
+    // Clear last submission if email is empty
+    if (!mainEmail || !mainEmail.trim()) {
+      setLastSubmission(null);
     }
-  }, [hasSubmitted, mainEmail, guests, setStoredEmail, setStoredGuests]);
-
-  // Normalize guests: default plate to 'peixe' if missing so the dropdown is preselected
-  useEffect(() => {
-    const needsDefault = guests.some((guest) => !guest.plate);
-    if (needsDefault) {
-      const updated = guests.map((guest) =>
-        guest.plate ? guest : { ...guest, plate: 'peixe' }
-      );
-      form.setFieldValue('guests', updated);
-    }
-  }, [guests, form]);
+  }, [mainEmail, setStoredEmail]);
 
   // Auto-clear success message after 1 minute
   useEffect(() => {
@@ -63,48 +45,51 @@ const AnswerForm = ({ plateOptions = [] }) => {
       const timer = setTimeout(() => {
         setMessage('');
         setMessageType('');
-      }, 60000); // 1 minute
+      }, 60000);
       return () => clearTimeout(timer);
     }
   }, [messageType]);
 
-  useEffect(() => {
+  const handleEmailBlur = useCallback(async () => {
     const email = form.values.mainEmail?.trim();
-    if (!email) return;
+    
+    // Only fetch if email is valid
+    if (!email || !email.includes('@')) {
+      setLastSubmission(null);
+      return;
+    }
 
-    const controller = new AbortController();
-    const fetchLatest = async () => {
-      try {
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
-        const params = new URLSearchParams({ email });
-        const response = await fetch(`${apiBaseUrl}/api/confirmations?${params.toString()}`, {
-          signal: controller.signal,
+    try {
+      const data = await confirmationAPI.getByEmail(email);
+      if (data?.success && data.confirmations.length > 0) {
+        const mappedGuests = data.confirmations.map((guest) => ({
+          name: guest.guest,
+          plate: guest.plate_option,
+          isChild: guest.price === 'child',
+        }));
+        setLastSubmission({
+          email,
+          guests: mappedGuests,
+          timestamp: data.timestamp || data.confirmations[0]?.submitted_at || new Date().toISOString(),
         });
-        const data = await response.json();
-        if (data?.success && Array.isArray(data.confirmations)) {
-          const mappedGuests = data.confirmations.map((row) => ({
-            name: row.guest,
-            plate: row.plate_option,
-            isChild: row.price === 'child',
-          }));
-          setLastSubmission({
-            email,
-            guests: mappedGuests,
-            timestamp: data.timestamp || data.confirmations[0]?.submitted_at || new Date().toISOString(),
-          });
-        }
-      } catch (err) {
-        // ignore fetch errors
+      } else {
+        setLastSubmission(null);
       }
-    };
-
-    fetchLatest();
-    return () => controller.abort();
-  }, [form.values.mainEmail, setLastSubmission]);
+    } catch (error) {
+      // Silently fail - no need to show error for fetching previous submissions
+      setLastSubmission(null);
+    }
+  }, [form.values.mainEmail]);
 
   const handleEmailChange = useCallback((e) => {
     if (hasSubmitted) setHasSubmitted(false);
     form.handleChange(e);
+  }, [form, hasSubmitted]);
+
+  const handleClearEmail = useCallback(() => {
+    form.setFieldValue('mainEmail', '');
+    setLastSubmission(null);
+    if (hasSubmitted) setHasSubmitted(false);
   }, [form, hasSubmitted]);
 
   const handleGuestChange = useCallback((id, field, value) => {
@@ -157,7 +142,6 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
   const onSubmit = async (values) => {
     const { mainEmail: email, guests: guestsList } = values;
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || '';
     
     const validation = validateForm(email, guestsList);
     if (!validation.isValid) {
@@ -173,18 +157,12 @@ const AnswerForm = ({ plateOptions = [] }) => {
       const responses = await Promise.all(
         guestsList.map((guest) => {
           const price = guest.isChild ? 'child' : 'adult';
-          return fetch(`${apiBaseUrl}/api/save-data`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+          return confirmationAPI.post({
               Email: email,
               Guest: guest.name,
               PlateOption: guest.plate,
               Price: price,
-            }),
-          }).then((response) => response.json());
+          })
         })
       );
 
@@ -203,18 +181,14 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
       const clearedGuests = [{ id: 1, name: '', plate: 'peixe', isChild: false }];
       form.setValues({ mainEmail: email, guests: clearedGuests });
-      setStoredEmail(email);
-      setStoredGuests(clearedGuests);
       setHasSubmitted(true);
 
-      const params = new URLSearchParams({ email, timestamp: submitTimestamp });
-      const response = await fetch(`${apiBaseUrl}/api/confirmations?${params.toString()}`);
-      const data = await response.json();
-      if (data?.success && Array.isArray(data.confirmations)) {
-        const mappedGuests = data.confirmations.map((row) => ({
-          name: row.guest,
-          plate: row.plate_option,
-          isChild: row.price === 'child',
+      const data = await confirmationAPI.getByEmail(email);
+      if (data.confirmations.length > 0) {
+        const mappedGuests = data.confirmations.map((guest) => ({
+          name: guest.name,
+          plate: guest.plate_option,
+          isChild: guest.price === 'child',
         }));
         setLastSubmission({
           email,
@@ -240,17 +214,31 @@ const AnswerForm = ({ plateOptions = [] }) => {
         <form onSubmit={handleOpenConfirm}>
           <div className="form-group">
             <label htmlFor="mainEmail">Email <span className="required">*</span></label>
-            <input
-              id="mainEmail"
-              name="mainEmail"
-              type="email"
-              value={mainEmail}
-              onChange={handleEmailChange}
-              placeholder="seu@email.com"
-              required
-              disabled={form.isSubmitting}
-              className="form-input"
-            />
+            <div className="input-with-icon">
+              <input
+                id="mainEmail"
+                name="mainEmail"
+                type="email"
+                value={mainEmail}
+                onChange={handleEmailChange}
+                onBlur={handleEmailBlur}
+                placeholder="seu@email.com"
+                required
+                disabled={form.isSubmitting}
+                className="form-input"
+              />
+              {mainEmail && (
+                <button
+                  type="button"
+                  onClick={handleClearEmail}
+                  className="clear-input-button"
+                  title="Limpar email"
+                  disabled={form.isSubmitting}
+                >
+                  <MdClose size={20} />
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="guests-section">
@@ -259,15 +247,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
             {guests.map((guest, index) => (
               <div 
                 key={guest.id} 
-                className={`guest-item ${draggedId === guest.id ? 'dragging' : ''}`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, guest.id, setDraggedId)}
-                onDragOver={handleDragOver}
-                onDrop={(e) => {
-                  if (hasSubmitted) setHasSubmitted(false);
-                  handleDrop(e, draggedId, guest.id, guests, setStoredGuests, setDraggedId);
-                }}
-                onDragEnd={() => handleDragEnd(setDraggedId)}
+                className="guest-item"
               >
                 <div className="guest-number">Convidado {index + 1}</div>
                 
@@ -295,8 +275,10 @@ const AnswerForm = ({ plateOptions = [] }) => {
                     <label htmlFor={`guest-plate-${guest.id}`}>Prato <span className="required">*</span></label>
                     <select
                       id={`guest-plate-${guest.id}`}
-                      value={guest.plate}
-                      onChange={(e) => handleGuestChange(guest.id, 'plate', e.target.value)}
+                      value={guest.plate || 'peixe'}
+                      onChange={(e) => {
+                        handleGuestChange(guest.id, 'plate', e.target.value)
+                      }}
                       required
                       disabled={form.isSubmitting}
                       className="form-select"

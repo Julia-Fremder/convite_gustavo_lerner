@@ -45,7 +45,6 @@ const initializeDatabase = async () => {
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email TEXT NOT NULL,
         name TEXT NOT NULL,
-        guest TEXT NOT NULL,
         plate_option TEXT NOT NULL,
         price TEXT NOT NULL,
         submitted_at TIMESTAMPTZ,
@@ -75,7 +74,6 @@ const initializeDatabase = async () => {
       ALTER TABLE confirmations
         ADD COLUMN IF NOT EXISTS email TEXT,
         ADD COLUMN IF NOT EXISTS name TEXT,
-        ADD COLUMN IF NOT EXISTS guest TEXT,
         ADD COLUMN IF NOT EXISTS plate_option TEXT,
         ADD COLUMN IF NOT EXISTS price TEXT,
         ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ,
@@ -160,19 +158,18 @@ const saveFormData = async (data) => {
   const client = await getPool().connect();
 
   const email = data?.Email || null;
-  const guestName = data?.Guest || null;
+  const name = data?.Name || null;
   const plateOption = data?.PlateOption || null;
   const price = data?.Price || null;
 
   try {
     await client.query(
-      `INSERT INTO confirmations (id, email, name, guest, plate_option, price, submitted_at, raw_data)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO confirmations (id, email, name, plate_option, price, submitted_at, raw_data)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
         id,
         email,
-        guestName, // keeping name column for backward compatibility
-        guestName,
+        name,
         plateOption,
         price,
         timestamp,
@@ -185,40 +182,22 @@ const saveFormData = async (data) => {
   }
 };
 
-const getConfirmationsByEmail = async ({ email, timestamp }) => {
+const getConfirmationsByEmail = async ({ email }) => {
   if (!email) throw new Error('Email is required');
   const client = await getPool().connect();
   try {
-    if (timestamp) {
-      const { rows } = await client.query(
-        `SELECT id, email, name, guest, plate_option, price, submitted_at, raw_data
-         FROM confirmations
-         WHERE email = $1 AND submitted_at = $2
-         ORDER BY created_at DESC`,
-        [email, timestamp]
-      );
-      return { timestamp, rows };
-    }
-
-    const { rows: latestTsRows } = await client.query(
-      `SELECT submitted_at
-       FROM confirmations
-       WHERE email = $1
-       ORDER BY submitted_at DESC
-       LIMIT 1`,
+     const { rows: latestTsRows } = await client.query(
+       `SELECT id, email, name, plate_option, price, submitted_at, raw_data
+        FROM confirmations
+        WHERE email = $1
+        ORDER BY submitted_at DESC, created_at DESC`,
       [email]
     );
 
     if (!latestTsRows.length) return { timestamp: null, rows: [] };
 
-    const latestTimestamp = latestTsRows[0].submitted_at;
-    const { rows } = await client.query(
-      `SELECT id, email, name, guest, plate_option, price, submitted_at, raw_data
-       FROM confirmations
-       WHERE email = $1 AND submitted_at = $2
-       ORDER BY created_at DESC`,
-      [email, latestTimestamp]
-    );
+    const latestTimestamp = latestTsRows[0].submitted_at.toISOString();
+    const rows = latestTsRows.filter(rowSubmitted => rowSubmitted.submitted_at?.toISOString() === latestTimestamp);
 
     return { timestamp: latestTimestamp, rows };
   } finally {

@@ -1,19 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { MdContentCopy } from 'react-icons/md';
+/* global setTimeout */
+
+import { useCallback, useState } from 'react';
+import { MdContentCopy, MdOutlineEvent } from 'react-icons/md';
+import useNavigator from '../hooks/useNavigator';
+import './InfoSection.css';
 
 const InfoSection = () => {
-  const [copyStatus, setCopyStatus] = useState({ message: '', isError: false });
-
-  const handleCopy = useCallback(async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyStatus({ message: 'Copiado!', isError: false });
-      setTimeout(() => setCopyStatus({ message: '', isError: false }), 2000);
-    } catch (err) {
-      setCopyStatus({ message: 'Erro ao copiar', isError: true });
-      setTimeout(() => setCopyStatus({ message: '', isError: false }), 2000);
-    }
-  }, []);
+  const { handleCopy, copyStatus } = useNavigator();
 
   const now = new Date();
   const dtStamp = `${now.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
@@ -37,96 +30,65 @@ const InfoSection = () => {
   return (
     <section className="info-section">
       <div className="event-details">
-        <p><strong>16 de março de 2026 - 10:30</strong></p>
+        <p className="date-row">
+          <strong>16 de março de 2026 - 10:30</strong>
+          <a
+            href={icsDataUri}
+            download="evento-2026-03-16.ics"
+            className="calendar-action"
+            aria-label="Adicionar ao calendário"
+            title="Adicionar ao calendário"
+          >
+            <MdOutlineEvent size={18} aria-hidden="true" />
+          </a>
+        </p>
         <p><strong>Bar Mitzvah: </strong>Sinagoga de Tomar</p>
         <p><strong>Comemoração e casamento: </strong>Quinta da Colina Verde</p>
-      </div>
-      <div style={{ margin: '16px 0' }}>
-        <a
-          href={icsDataUri}
-          download="evento-2026-03-16.ics"
-          style={{
-            display: 'inline-block',
-            padding: '10px 16px',
-            borderRadius: '8px',
-            background: '#4caf50',
-            color: '#fff',
-            textDecoration: 'none',
-            fontWeight: 700,
-            boxShadow: '0 4px 10px rgba(76, 175, 80, 0.25)',
-          }}
-        >
-          Adicionar ao calendário
-        </a>
       </div>
       <p className="transport-note">
         Organizaremos transporte para quem precisar, preencha sua
         necessidade no formulário de confirmação de presença.
       </p>
-      <div className="map-container" style={{ textAlign: 'left' }}>
+      <div className="map-container">
         <h4>Localizações</h4>
-        <div style={{ marginBottom: '14px' }}>
-          <p style={{ margin: '0 0 6px 0' }}><strong>Sinagoga de Tomar</strong></p>
-          <p style={{ margin: '0 0 6px 0', color: '#555', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="location-block">
+          <h5 className="location-heading"><strong>Sinagoga de Tomar</strong></h5>
+          <p className="address-line">
             R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal
             <button
               type="button"
               onClick={() => handleCopy('R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal')}
-              style={{
-                border: '1px solid #ddd',
-                background: '#f7f7f7',
-                borderRadius: '6px',
-                padding: '6px 8px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
+              className="copy-button"
               aria-label="Copiar endereço da Sinagoga"
             >
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="links-row">
             <a href="https://www.google.com/maps/search/?api=1&query=Sinagoga+de+Tomar" target="_blank" rel="noreferrer" className="invite-link">Abrir no Google Maps</a>
             <a href="https://waze.com/ul?q=Sinagoga%20de%20Tomar" target="_blank" rel="noreferrer" className="invite-link">Abrir no Waze</a>
           </div>
         </div>
         <div>
-          <p style={{ margin: '0 0 6px 0' }}><strong>Quinta da Colina Verde</strong></p>
-          <p style={{ margin: '0 0 6px 0', color: '#555', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <p className="location-heading"><strong>Quinta da Colina Verde</strong></p>
+          <p className="address-line">
             Quinta da Colina Verde, Portugal
             <button
               type="button"
               onClick={() => handleCopy('Quinta da Colina Verde, Portugal')}
-              style={{
-                border: '1px solid #ddd',
-                background: '#f7f7f7',
-                borderRadius: '6px',
-                padding: '6px 8px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
+              className="copy-button"
               aria-label="Copiar endereço da Quinta"
             >
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="links-row">
             <a href="https://www.google.com/maps/search/?api=1&query=Quinta+da+Colina+Verde" target="_blank" rel="noreferrer" className="invite-link">Abrir no Google Maps</a>
             <a href="https://waze.com/ul?q=Quinta%20da%20Colina%20Verde%20Portugal" target="_blank" rel="noreferrer" className="invite-link">Abrir no Waze</a>
           </div>
         </div>
         {copyStatus.message && (
-          <p
-            style={{
-              marginTop: '10px',
-              color: copyStatus.isError ? '#d32f2f' : '#4caf50',
-              fontWeight: 600,
-            }}
-          >
+          <p className={`copy-status ${copyStatus.isError ? 'is-error' : 'is-success'}`}>
             {copyStatus.message}
           </p>
         )}

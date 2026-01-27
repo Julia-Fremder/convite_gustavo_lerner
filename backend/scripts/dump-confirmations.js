@@ -27,8 +27,8 @@ const pool = new Pool({
 const ensureSchema = async (client) => {
   await client.query(`
     ALTER TABLE confirmations
+      ADD COLUMN IF NOT EXISTS email TEXT,
       ADD COLUMN IF NOT EXISTS name TEXT,
-      ADD COLUMN IF NOT EXISTS guest TEXT,
       ADD COLUMN IF NOT EXISTS plate_option TEXT,
       ADD COLUMN IF NOT EXISTS price TEXT,
       ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ,
@@ -74,7 +74,6 @@ const ensureSchema = async (client) => {
         UPDATE confirmations
         SET
           name = COALESCE(name, data->>'Name'),
-          guest = COALESCE(guest, data->>'Guest'),
           plate_option = COALESCE(plate_option, data->>'PlateOption'),
           price = COALESCE(price, data->>'Price'),
           submitted_at = COALESCE(submitted_at, (data->>'timestamp')::timestamptz)
@@ -91,18 +90,17 @@ const ensureSchema = async (client) => {
     try {
       await ensureSchema(client);
       const { rows } = await client.query(
-        'SELECT id, name, guest, plate_option, price, submitted_at, created_at, raw_data FROM confirmations ORDER BY created_at DESC LIMIT 50'
+        'SELECT id, name, plate_option, price, submitted_at, created_at, raw_data FROM confirmations ORDER BY created_at DESC LIMIT 50'
       );
       console.log(`Fetched ${rows.length} rows`);
-      const flattened = rows.map((row) => ({
-        id: row.id,
-        created_at: row.created_at,
-        submitted_at: row.submitted_at,
-        Name: row.name ?? row.raw_data?.Name,
-        Guest: row.guest ?? row.raw_data?.Guest,
-        PlateOption: row.plate_option ?? row.raw_data?.PlateOption,
-        Price: row.price ?? row.raw_data?.Price,
-        timestamp: row.raw_data?.timestamp,
+      const flattened = rows.map((guest) => ({
+        id: guest.id,
+        created_at: guest.created_at,
+        submitted_at: guest.submitted_at,
+        Name: guest.name ?? guest.raw_data?.Name,
+        PlateOption: guest.plate_option ?? guest.raw_data?.PlateOption,
+        Price: guest.price ?? guest.raw_data?.Price,
+        timestamp: guest.raw_data?.timestamp,
       }));
       console.table(flattened);
     } finally {

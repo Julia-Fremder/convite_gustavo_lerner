@@ -6,7 +6,7 @@
     background: linear-gradient(135deg, #f8f7f3 0%, #ede8df 100%);
 }
 
-.giftlist-section h3 {
+.giftlist-section h2 {
     font-family: 'Libre Baskerville', serif;
     font-weight: 700;
     font-size: 32px;
@@ -52,101 +52,6 @@
 .giftlist-subsection p {
     font-size: 17px;
     color: #58450a;
-}
-
-/* Gift Card Grid and Cards */
-.gift-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin: 16px 0;
-}
-
-.gift-card {
-    background: #fff;
-    border: 1px solid #e9e2cf;
-    border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
-    overflow: hidden;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.gift-card--selected {
-    border-color: #4caf50;
-    box-shadow: 0 8px 18px rgba(76, 175, 80, 0.22);
-}
-
-.gift-card--disabled {
-    opacity: 0.55;
-    pointer-events: none;
-}
-
-.gift-card__img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    background: #f5f2ea;
-}
-
-.gift-card__body {
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.gift-card__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.gift-card__header h4 {
-    flex: 1;
-    margin: 0;
-    font-size: 16px;
-    color: #3a321f;
-}
-
-.gift-card__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-top: auto;
-    padding-top: 10px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.gift-card__checkbox {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: #4caf50;
-    flex-shrink: 0;
-}
-
-.gift-card__checkbox:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.gift-card__desc {
-    font-size: 14px;
-    color: #6b5d3b;
-    margin: 6px 0 10px;
-}
-
-.gift-card__price {
-    font-weight: 700;
-    margin-bottom: 0;
-    color: #3a321f;
-    margin: 0;
 }
 
 /* Container and Divider */
@@ -296,4 +201,206 @@
     max-width: 100%;
     height: auto;
     border-radius: 4px;
+}
+
+/* Payment Confirmation Section */
+.giftlist-confirmed-section {
+    margin-top: 30px;
+    padding: 30px 20px;
+    border-radius: 8px;
+}
+
+.giftlist-confirmed-section h3 {
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.giftlist-confirmed-section__content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.giftlist-confirmed-section__header {
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.giftlist-confirmed-section__value {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #58450a;
+}
+
+.giftlist-confirmed-section__status {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #777;
+}
+
+.giftlist-confirmed-section__description {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #666;
+}
+
+.giftlist-confirmed-section__message {
+    background: #faf8f4;
+    padding: 16px;
+    border-radius: 6px;
+    border-left: 4px solid #BFA14A;
+    margin-bottom: 12px;
+}
+
+.giftlist-confirmed-section__message p {
+    margin: 0;
+    font-size: 15px;
+    color: #58450a;
+    font-style: italic;
+}
+
+.giftlist-confirmed-section__date {
+    margin: 0;
+    font-size: 13px;
+    color: #999;
+}
+
+.giftlist-confirmed-section--received {
+    background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
+    border: 2px solid #4caf50;
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.15);
+}
+
+.giftlist-confirmed-section--received h3 {
+    color: #2d5a2d;
+}
+
+.giftlist-confirmed-section--received .giftlist-confirmed-section__content {
+    border-left: 6px solid #4caf50;
+}
+
+.giftlist-confirmed-section--received .giftlist-confirmed-section__header,
+.giftlist-confirmed-section--received .giftlist-confirmed-section__value,
+.giftlist-confirmed-section--received .giftlist-confirmed-section__status,
+.giftlist-confirmed-section--received .giftlist-confirmed-section__description {
+    color: #2d5a2d;
+}
+
+.giftlist-confirmed-section--pending {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
+    border: 2px solid #f6c343;
+    box-shadow: 0 6px 16px rgba(246, 195, 67, 0.25);
+}
+
+.giftlist-confirmed-section--pending h3 {
+    color: #8a6d1a;
+}
+
+.giftlist-confirmed-section--pending .giftlist-confirmed-section__content {
+    border-left: 6px solid #f6c343;
+}
+
+.giftlist-confirmed-section--pending .giftlist-confirmed-section__header,
+.giftlist-confirmed-section--pending .giftlist-confirmed-section__value,
+.giftlist-confirmed-section--pending .giftlist-confirmed-section__status,
+.giftlist-confirmed-section--pending .giftlist-confirmed-section__description {
+    color: #8a6d1a;
+}
+
+/* Modal Styles */
+.confirm-guests {
+    margin: 12px 0;
+    text-align: left;
+}
+
+.confirm-guests p {
+    margin-top: 10px;
+}
+
+.modal-form-group {
+    margin-bottom: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.modal-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.modal-form-group input,
+.modal-form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.modal-form-group textarea {
+    resize: vertical;
+}
+
+.payment-details {
+    margin: 12px 0;
+    text-align: left;
+}
+
+.payment-qr {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.payment-qr img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.payment-payload {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+}
+
+.payment-payload p {
+    margin: 0 0 6px 0;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.payment-payload code {
+    display: block;
+    word-break: break-all;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+}
+
+/* User Payments List */
+.giftlist-payments-list {
+    margin-top: 20px;
+    text-align: left;
+    padding-left: 18px;
+    color: #58450a;
+}
+
+.giftlist-payments-list tr, th {
+    margin-bottom: 8px;
+}
+.giftlist-payments-list th {
+    text-align: left;
+    padding-right: 12px;
+    font-weight: 700;
+}
+.giftlist-payments-list td {
+    padding-right: 12px;
+}
+
+.giftlist-payment-result--with-margin {
+    margin-top: 20px;
 }

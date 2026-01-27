@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { contentAPI } from '../services/apiClient';
 
 const useContent = () => {
   const [content, setContent] = useState(null);
@@ -9,11 +10,7 @@ const useContent = () => {
     const getContent = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/content.json');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch content: ${response.statusText}`);
-        }
-        const data = await response.json();
+        const data = await contentAPI.fetch();
         setContent(data);
         setError(null);
       } catch (err) {

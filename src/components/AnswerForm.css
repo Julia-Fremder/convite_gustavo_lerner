@@ -51,6 +51,43 @@
     text-align: left;
 }
 
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .form-input {
+    padding-right: 40px;
+}
+
+.clear-input-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    border-radius: 50%;
+}
+
+.clear-input-button:hover {
+    color: #d9534f;
+    background-color: rgba(217, 83, 79, 0.1);
+}
+
+.clear-input-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 .required {
     color: #d9534f;
 }
@@ -102,19 +139,12 @@
     background-color: #f9f9f9;
     border-left: 4px solid #BFA14A;
     border-radius: 6px;
-    cursor: move;
     transition: all 0.2s ease;
 }
 
 .guest-item:hover {
     background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.guest-item.dragging {
-    opacity: 0.5;
-    background-color: #e8e8e8;
-    transform: scale(0.98);
 }
 
 .guest-number {

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 const YouTubeGallery = ({youtubeLinks}) => {
   const getYouTubeId = useCallback((url) => {

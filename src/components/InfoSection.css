@@ -1,0 +1,88 @@
+.info-section {
+  text-align: center;
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: #1e88e5;
+  background: #f2f6ff;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.calendar-action:hover {
+  background: #e6f0ff;
+  color: #1565c0;
+}
+
+.calendar-action:active {
+  background: #d9e7ff;
+}
+
+.map-container {
+  text-align: left;
+}
+
+.location-block {
+  margin-bottom: 14px;
+}
+
+.location-heading {
+  margin: 0 0 6px 0;
+}
+
+.address-line {
+  margin: 0 0 6px 0;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.copy-button {
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.copy-button:hover {
+  background: #ededed;
+  border-color: #ccc;
+}
+
+.links-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.copy-status {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.copy-status.is-error {
+  color: #d32f2f;
+}
+
+.copy-status.is-success {
+  color: #4caf50;
+}

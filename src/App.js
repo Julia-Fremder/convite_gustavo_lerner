@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import InviteSection from './components/InviteSection';
 import InfoSection from './components/InfoSection';
@@ -6,6 +6,7 @@ import CarouselSection from './components/CarouselSection';
 import AnswerForm from './components/AnswerForm';
 import GiftlistSection from './components/GiftlistSection';
 import PaymentsPage from './components/PaymentsPage';
+import { contentAPI } from './services/apiClient';
 
 const App = () => {
   const [content, setContent] = useState(null);
@@ -13,8 +14,7 @@ const App = () => {
   const isPaymentsRoute = window.location.pathname === '/payments';
 
   const getContent = useCallback(async () => 
-    await fetch('/content.json')
-      .then(response => response.json())
+    contentAPI.fetch()
       .then(result => {
         setContent(result);
         setLoading(false);
@@ -74,8 +74,6 @@ const App = () => {
         photos={content.photo_gallery}
       />
       
-      {/* RSVPSection component kept but not used - using AnswerForm instead */}
-
       <InfoSection />
 
       <AnswerForm plateOptions={content.plate_options || []} />
