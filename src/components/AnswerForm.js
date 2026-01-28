@@ -1,5 +1,3 @@
-/* global setTimeout, clearTimeout, AbortController, process, URLSearchParams */
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { MdDelete, MdAdd, MdClose } from 'react-icons/md';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -75,7 +73,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
       } else {
         setLastSubmission(null);
       }
-    } catch (error) {
+    } catch (_error) {
       // Silently fail - no need to show error for fetching previous submissions
       setLastSubmission(null);
     }
