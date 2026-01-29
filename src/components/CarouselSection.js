@@ -1,4 +1,3 @@
-import YouTubeGallery from './YouTubeGallery';
 
 const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLinks }) => {
     return (
@@ -18,11 +17,6 @@ const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLink
                         />
                     ))}
                 </div>
-
-                <YouTubeGallery
-                    youtubeLinks={youtubeLinks}
-                />
-
                 <h2>{photosTitle}</h2>
                 <div className="photo-gallery">
                     {photos && photos.map(photo => (
