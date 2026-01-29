@@ -62,7 +62,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
       const data = await confirmationAPI.getByEmail(email);
       if (data?.success && data.confirmations.length > 0) {
         const mappedGuests = data.confirmations.map((guest, index) => ({
-          id: index,
+          id: index + 1,
           name: guest.guest,
           plate: guest.plate_option,
           isChild: guest.price === 'child',
@@ -72,6 +72,8 @@ const AnswerForm = ({ plateOptions = [] }) => {
           guests: mappedGuests,
           timestamp: data.timestamp || data.confirmations[0]?.submitted_at || new Date().toISOString(),
         });
+        // Populate form with last submission data
+        form.setFieldValue('guests', mappedGuests);
       } else {
         setLastSubmission(null);
       }
@@ -79,7 +81,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
       // Silently fail - no need to show error for fetching previous submissions
       setLastSubmission(null);
     }
-  }, [form.values.mainEmail]);
+  }, [form.values.mainEmail, form]);
 
   const handleEmailChange = useCallback((e) => {
     if (hasSubmitted) setHasSubmitted(false);
@@ -105,7 +107,8 @@ const AnswerForm = ({ plateOptions = [] }) => {
   };
 
   const handleAgeCheckConfirm = useCallback((isUnder10) => {
-    const newId = guests.length > 0 ? guests.length : 1;
+    const lastGuest = guests[guests.length - 1];
+    const newId = lastGuest ? lastGuest.id + 1 : 1;
     const updatedGuests = [...guests, { id: newId, name: '', plate: 'peixe', isChild: isUnder10 }];
     form.setFieldValue('guests', updatedGuests);
     setShowAgeModal(false);

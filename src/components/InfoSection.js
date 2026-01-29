@@ -31,7 +31,7 @@ const InfoSection = () => {
     <section className="info-section">
       <div className="event-details">
         <h3>Informações</h3>
-        <p className="date-row">
+        <div className="date-row">
           <p style={{fontSize: '20px'}}>16 de março de 2026 - 10:30</p>
           <a
             href={icsDataUri}
@@ -42,7 +42,7 @@ const InfoSection = () => {
           >
             <MdOutlineEvent size={18} aria-hidden="true" />
           </a>
-        </p>
+        </div>
       <div className="map-container">
         <div className="location-block">
           <h4 className="location-heading">Sinagoga de Tomar</h4>

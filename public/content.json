@@ -157,6 +157,15 @@
       "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
       "description": "Levar o Guga para comer sushi"
+    },
+    {
+      "id": "eur_5",
+      "title": "Show no verão",
+      "price": 20,
+      "currency": "EUR",
+      "img": "/assets/images/show.jpg",
+      "phone": "911191515",
+      "description": "Aproveitar o verão em Portugal com música ao vivo"
     }
   ],
   "presents_brl": [
@@ -195,6 +204,15 @@
       "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
       "description": "Levar o Guga para comer sushi"
+    },
+    {
+      "id": "brl_5",
+      "title": "Show no verão",
+      "price": 100,
+      "currency": "BRL",
+      "img": "/assets/images/show.jpg",
+      "phone": "911191515",
+      "description": "Aproveitar o verão em Portugal com música ao vivo"
     }
   ],
   "presents_virtual_brl": [
