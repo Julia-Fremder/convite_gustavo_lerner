@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 # Simple workflow for deploying static content to GitHub Pages
->>>>>>> master
 name: Build and Deploy React to GitHub Pages
 
 on:
