@@ -1,6 +1,7 @@
 import './GiftCard.css';
 
 const GiftCard = ({ gift, quantity, disabled, currency, isProcessing, onUpdateQuantity }) => {
+  const publicUrl = process.env.PUBLIC_URL || '';
   const isSelected = quantity > 0;
   const totalPrice = Number(gift.price) * quantity;
 
@@ -10,7 +11,7 @@ const GiftCard = ({ gift, quantity, disabled, currency, isProcessing, onUpdateQu
     >
       <header className="gift-card__header">
       {gift.img && (
-        <img src={gift.img} alt={gift.title} className="gift-card__img" />
+        <img src={`${publicUrl}${gift.img}`} alt={gift.title} className="gift-card__img" />
       )}
       </header>
       <div className="gift-card__body">
