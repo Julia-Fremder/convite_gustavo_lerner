@@ -1,0 +1,7 @@
+{
+  "ignore_dirs": [
+    "backend",
+    "node_modules",
+    "public/assets/videos"
+  ]
+}

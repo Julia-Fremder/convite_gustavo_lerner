@@ -1,0 +1,4 @@
+# This folder contains data files
+data/
+node_modules/
+.env

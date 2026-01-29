@@ -1,0 +1,112 @@
+.info-section {
+  text-align: center;
+  margin: 60px 0;
+}
+
+.info-section h3 {
+  font-size: 34px;
+  margin-bottom: 12px; /* tighter title spacing */
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--color-blue-action);
+  background: var(--color-white-bg);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.calendar-action:hover {
+  background: var(--color-white-border);
+  color: var(--color-blue-hover);
+}
+
+.calendar-action:active {
+  background: var(--color-blue-shadow);
+}
+
+/* Event Details */
+.event-details {
+    background-color: rgba(191, 161, 74, 0.05);
+    padding: 30px;
+    border-radius: 8px;
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.event-details p {
+  margin: 15px 0;
+}
+
+.location-block {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+/* Increase spacing between the two location items */
+.location-block > div {
+  margin-top: 20px;
+}
+
+.location-heading {
+  margin-top: 16px;
+  font-size: 26px;
+  font-family: var(--font-cursive);
+  color: var(--color-beige-medium);
+  align-items: start;
+}
+
+.address-line {
+  margin: 0 0 12px 0;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 16px;
+}
+
+.copy-button {
+  border: 1px solid var(--color-white-border);
+  background: var(--color-white-bg);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.copy-button:hover {
+  background: var(--color-white-border);
+  border-color: var(--color-white-bg);
+}
+
+.copy-status {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.copy-status.is-error {
+  color: var(--color-orange-cancel);
+}
+
+.copy-status.is-success {
+  color: var(--color-green-save);
+}

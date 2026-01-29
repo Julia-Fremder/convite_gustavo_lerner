@@ -1,0 +1,148 @@
+/* GiftCard Component Styles */
+
+.gift-card {
+    background: var(--color-white-bg);
+    border: 1px solid var(--color-white-border);
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.gift-card--selected {
+    box-shadow: 0 8px 18px rgba(86, 46, 1, 0.22);
+}
+
+.gift-card--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.gift-card__header {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-beige-light);
+    flex-shrink: 0;
+}
+.gift-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gift-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 10px;
+    min-height: 0;
+}
+
+.gift-card__body h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: var(--color-beige-dark);
+    font-family: var(--font-noto-sans);
+}
+
+.gift-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    padding: 12px 10px 10px 10px;
+    border-top: 1px solid var(--color-white-border);
+    flex-shrink: 0;
+}
+
+.gift-card__quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.gift-card__quantity-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-beige-medium);
+    background: transparent;
+    color: var(--color-beige-dark);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.gift-card__quantity-btn:hover:not(:disabled) {
+    background: var(--color-beige-light);
+    border-color: var(--color-beige-dark);
+}
+
+.gift-card__quantity-btn--add {
+    background: var(--color-beige-light);
+    color: var(--color-white-bg);
+    border-color: var(--color-beige-light);
+}
+
+.gift-card__quantity-btn--add:hover:not(:disabled) {
+    background: var(--color-beige-medium);
+    border-color: var(--color-beige-medium);
+}
+
+.gift-card__quantity-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.gift-card__quantity-display {
+    font-weight: bold;
+    color: var(--color-beige-dark);
+    min-width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.gift-card__desc {
+    font-size: 14px;
+    color: var(--color-beige-medium);
+    margin: 0 0 12px 0;
+    flex: 1;
+}
+
+.gift-card__price {
+    font-weight: 700;
+    margin-bottom: 0;
+    color: var(--color-beige-dark);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gift-card__total {
+    font-size: 14px;
+    color: var(--color-green-save);
+    font-weight: 600;
+}
+
+/* Gift Card Grid */
+.gift-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}

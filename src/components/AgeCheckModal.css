@@ -1,0 +1,120 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--color-white-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--color-white-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-beige-dark);
+  font-family: var(--font-noto-sans);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--color-beige-dark);
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.modal-body h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: var(--color-beige-dark);
+  font-family: var(--font-noto-sans);
+}
+
+.modal-body p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-beige-dark);
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--color-white-border);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.modal-btn-primary {
+  background-color: var(--color-beige-light);
+  color: var(--color-white-bg);
+  text-shadow: 0.5px 0.5px 1px var(--color-beige-dark);
+}
+
+.modal-btn-primary:hover {
+  background-color: var(--color-beige-medium);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(86, 46, 1, 0.2);
+}
+
+.modal-btn-secondary {
+  background-color: transparent;
+  color: var(--color-beige-dark);
+  border: 1px solid var(--color-beige-medium);
+}
+
+.modal-btn-secondary:hover {
+  background-color: var(--color-beige-light);
+  border-color: var(--color-beige-dark);
+  transform: translateY(-1px);
+}
