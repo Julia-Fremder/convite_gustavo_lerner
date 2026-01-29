@@ -16,7 +16,7 @@ const GiftlistSection = () => {
   const [eurDisabled, setEurDisabled] = useState(false);
   const [brlDisabled, setBrlDisabled] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const {storedEmail, setStoredEmail} = useLocalStorage('giftlist_email', '');
+  const [storedEmail, setStoredEmail] = useLocalStorage();
   const [userEmail, setUserEmail] = useState(storedEmail || '');
   const [userMessage, setUserMessage] = useState('');
   const [userPayments, setUserPayments] = useState([]);

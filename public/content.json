@@ -127,53 +127,56 @@
       "title": "Jantar romantico em Lisboa",
       "price": 40,
       "currency": "EUR",
-      "img": "/assets/images/gift-eur-1.png",
+      "img": "/assets/images/dinner.jpg",
       "phone": "911191515",
       "description": "Um brinde aos noivos com vista pro Tejo"
     },
     {
       "id": "eur_2",
-      "title": "Passeio de elétrico",
+      "title": "Passeio em Porto",
       "price": 25,
       "currency": "EUR",
-      "img": "/assets/images/gift-eur-2.png",
+      "img": "/assets/images/porto.jpg",
       "phone": "911191515",
-      "description": "Bilhetes para um dia turistando em Lisboa"
+      "description": "Bilhetes para um dia turistando em Porto"
     },
     {
       "id": "eur_3",
-      "title": "Pastel de nata por nossa conta",
+      "title": "Pastel de nata",
       "price": 12,
       "currency": "EUR",
-      "img": "/assets/images/gift-eur-3.png",
+      "img": "/assets/images/pastel_de_nata.jpg",
       "phone": "911191515",
-      "description": "Doces para celebrar mais um ano de amor"
+      "description": "Doces para celebrar"
     }
   ],
   "presents_brl": [
     {
       "id": "brl_1",
-      "title": "Jantar no Rio",
-      "price": 150,
-      "currency": "BRL",
-      "img": "/assets/images/gift-br-1.png",
-      "description": "Um brinde com vista pro Pao de Acucar"
+      "title": "Jantar romantico em Lisboa",
+      "price": 120,
+      "currency": "EUR",
+      "img": "/assets/images/dinner.jpg",
+      "phone": "911191515",
+      "description": "Um brinde aos noivos com vista pro Tejo"
     },
     {
       "id": "brl_2",
-      "title": "Fim de semana na serra",
-      "price": 300,
-      "currency": "BRL",
-      "img": "/assets/images/gift-br-2.png",
-      "description": "Escapadinha para recarregar as energias"
+      "title": "Passeio em Porto",
+      "price": 250,
+      "currency": "EUR",
+      "img": "/assets/images/porto.jpg",
+      "phone": "911191515",
+      "description": "Bilhetes para um dia turistando em Porto"
     },
     {
       "id": "brl_3",
-      "title": "Cafes e livros",
-      "price": 80,
-      "currency": "BRL",
-      "img": "/assets/images/gift-br-3.png",
-      "description": "Leituras e bons cafes para os dois"
+      "title": "Pastel de nata",
+      "price": 40,
+      "currency": "EUR",
+      "img": "/assets/images/pastel_de_nata.jpg",
+      "phone": "911191515",
+      "description": "Doces para celebrar"
     }
   ],
   "presents_virtual_brl": [

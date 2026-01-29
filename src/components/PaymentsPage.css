@@ -29,19 +29,19 @@
 .refresh-button {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  background: #f8f8f8;
+  border: 1px solid var(--color-white-border);
+  background: var(--color-white-bg);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .refresh-button:hover {
-  background: #f0f0f0;
-  border-color: #bdbdbd;
+  background: var(--color-white-border);
+  border-color: var(--color-white-bg);
 }
 
 .refresh-button:active {
-  background: #e6e6e6;
+  background: var(--color-white-bg);
 }
 
 .table-wrapper {
@@ -51,12 +51,12 @@
 .payments-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border: 1px solid #eee;
+  background: var(--color-white-bg);
+  border: 1px solid var(--color-white-border);
 }
 
 .payments-table thead {
-  background: #f7f7f7;
+  background: var(--color-white-border);
 }
 
 .payments-table th,
@@ -68,18 +68,18 @@
 }
 
 .payments-table th {
-  border-bottom: 1px solid #e0e0e0;
-  color: #555;
+  border-bottom: 1px solid var(--color-white-border);
+  color: var(--color-gray-medium);
 }
 
 .payments-table tr {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-white-border);
 }
 
 .status-select {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-white-border);
   min-width: 130px;
 }
 
@@ -88,7 +88,7 @@
   min-width: 200px;
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-white-border);
   font-size: 14px;
   resize: vertical;
 }
@@ -97,18 +97,18 @@
   padding: 8px 12px;
   border-radius: 6px;
   border: none;
-  background: #4caf50;
-  color: #fff;
+  background: var(--color-green-save);
+  color: var(--color-white-bg);
   cursor: pointer;
   transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .save-button:hover {
-  background: #43a047;
+  background: var(--color-green-hover);
 }
 
 .save-button:active {
-  background: #388e3c;
+  background: var(--color-green-save);
 }
 
 .save-button:disabled {

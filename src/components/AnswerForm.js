@@ -4,6 +4,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import useForm from '../hooks/useForm';
 import './AnswerForm.css';
 import '../components/Modal.css';
+import AgeCheckModal from './AgeCheckModal';
 import { validateForm } from '../utils/formHelpers';
 import { confirmationAPI } from '../services/apiClient';
 
@@ -40,11 +41,11 @@ const AnswerForm = ({ plateOptions = [] }) => {
   // Auto-clear success message after 1 minute
   useEffect(() => {
     if (messageType === 'success') {
-      const timer = setTimeout(() => {
+      const timer = window.setTimeout(() => {
         setMessage('');
         setMessageType('');
       }, 60000);
-      return () => clearTimeout(timer);
+      return () => window.clearTimeout(timer);
     }
   }, [messageType]);
 

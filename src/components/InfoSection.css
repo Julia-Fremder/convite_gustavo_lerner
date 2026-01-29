@@ -15,19 +15,19 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  color: #1e88e5;
-  background: #f2f6ff;
+  color: var(--color-blue-action);
+  background: var(--color-white-bg);
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .calendar-action:hover {
-  background: #e6f0ff;
-  color: #1565c0;
+  background: var(--color-white-border);
+  color: var(--color-blue-hover);
 }
 
 .calendar-action:active {
-  background: #d9e7ff;
+  background: var(--color-blue-shadow);
 }
 
 .map-container {
@@ -52,8 +52,8 @@
 }
 
 .copy-button {
-  border: 1px solid #ddd;
-  background: #f7f7f7;
+  border: 1px solid var(--color-white-border);
+  background: var(--color-white-bg);
   border-radius: 6px;
   padding: 6px 8px;
   cursor: pointer;
@@ -64,8 +64,8 @@
 }
 
 .copy-button:hover {
-  background: #ededed;
-  border-color: #ccc;
+  background: var(--color-white-border);
+  border-color: var(--color-white-bg);
 }
 
 .links-row {
@@ -80,9 +80,9 @@
 }
 
 .copy-status.is-error {
-  color: #d32f2f;
+  color: var(--color-orange-cancel);
 }
 
 .copy-status.is-success {
-  color: #4caf50;
+  color: var(--color-green-save);
 }
