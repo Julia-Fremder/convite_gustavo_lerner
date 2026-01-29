@@ -1,5 +1,8 @@
 
 const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLinks }) => {
+    const resolveSrc = (s) => (s && s.startsWith('/')
+        ? `${process.env.PUBLIC_URL || ''}${s}`
+        : s);
     return (
         <section className="carousel-section">
             <div className="container">
@@ -9,7 +12,7 @@ const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLink
                         <video
                             key={video.id}
                             id={video.id}
-                            src={video.src}
+                            src={resolveSrc(video.src)}
                             muted
                             controls
                             type="video/mp4"
@@ -22,7 +25,7 @@ const CarouselSection = ({ videosTitle, photosTitle, videos, photos, youtubeLink
                     {photos && photos.map(photo => (
                         <div key={photo.id} className="img-container">
                             <img
-                                src={photo.src}
+                                src={resolveSrc(photo.src)}
                                 id={photo.id}
                                 alt={photo.alt}
                                 width="200"

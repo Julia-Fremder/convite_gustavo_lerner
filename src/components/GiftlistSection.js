@@ -460,7 +460,7 @@ const GiftlistSection = () => {
       )}
 
       <img
-        src="/assets/images/obrigado.gif"
+        src={`${process.env.PUBLIC_URL || ''}/assets/images/obrigado.gif`}
         alt="obrigado"
       />
 
