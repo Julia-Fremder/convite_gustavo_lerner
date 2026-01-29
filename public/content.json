@@ -154,7 +154,7 @@
       "title": "Sushi",
       "price": 40,
       "currency": "EUR",
-      "img": "/assets/images/pastel_de_nata.jpg",
+      "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
       "description": "Levar o Guga para comer sushi"
     }
@@ -192,7 +192,7 @@
       "title": "Sushi",
       "price": 150,
       "currency": "BRL",
-      "img": "/assets/images/pastel_de_nata.jpg",
+      "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
       "description": "Levar o Guga para comer sushi"
     }

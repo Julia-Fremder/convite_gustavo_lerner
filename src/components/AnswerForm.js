@@ -61,7 +61,8 @@ const AnswerForm = ({ plateOptions = [] }) => {
     try {
       const data = await confirmationAPI.getByEmail(email);
       if (data?.success && data.confirmations.length > 0) {
-        const mappedGuests = data.confirmations.map((guest) => ({
+        const mappedGuests = data.confirmations.map((guest, index) => ({
+          id: index,
           name: guest.guest,
           plate: guest.plate_option,
           isChild: guest.price === 'child',
@@ -104,7 +105,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
   };
 
   const handleAgeCheckConfirm = useCallback((isUnder10) => {
-    const newId = guests.length;
+    const newId = guests.length > 0 ? guests.length : 1;
     const updatedGuests = [...guests, { id: newId, name: '', plate: 'peixe', isChild: isUnder10 }];
     form.setFieldValue('guests', updatedGuests);
     setShowAgeModal(false);
@@ -184,7 +185,8 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
       const data = await confirmationAPI.getByEmail(email);
       if (data.confirmations.length > 0) {
-        const mappedGuests = data.confirmations.map((guest) => ({
+        const mappedGuests = data.confirmations.map((guest, index) => ({
+          id: index + 1,
           name: guest.name,
           plate: guest.plate_option,
           isChild: guest.price === 'child',

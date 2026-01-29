@@ -65,14 +65,23 @@ const GiftlistSection = () => {
     }
   }, [userEmail, refreshUserPayments]);
 
-  const totalSelected = useMemo(() => {
-    const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
-    const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
-    return Object.entries(quantities).reduce((sum, [giftId, qty]) => {
-      const gift = presents.find(p => p.id === giftId);
+  const totalSelectedEur = useMemo(() => {
+    return Object.entries(selectedEur).reduce((sum, [giftId, qty]) => {
+      const gift = presentsEur.find(p => p.id === giftId);
       return sum + (gift ? Number(gift.price || 0) * qty : 0);
     }, 0);
-  }, [selectedEur, selectedBrl, presentsEur, presentsBrl]);
+  }, [selectedEur, presentsEur]);
+
+  const totalSelectedBrl = useMemo(() => {
+    return Object.entries(selectedBrl).reduce((sum, [giftId, qty]) => {
+      const gift = presentsBrl.find(p => p.id === giftId);
+      return sum + (gift ? Number(gift.price || 0) * qty : 0);
+    }, 0);
+  }, [selectedBrl, presentsBrl]);
+
+  const totalSelected = useMemo(() => {
+    return Object.keys(selectedEur).length ? totalSelectedEur : totalSelectedBrl;
+  }, [selectedEur, totalSelectedEur, totalSelectedBrl]);
 
   const updateQuantity = (gift, currency, change) => {
     if (currency === 'EUR' && eurDisabled) return;
@@ -252,25 +261,49 @@ const GiftlistSection = () => {
   return (
     <section className="giftlist-section">
       <h2>Presentes</h2>
+      
       <div className="giftlist-container">
-      <div className="giftlist-subsection">
-        <h3>Opção Brasil (BRL / PIX)</h3>
-        <div className="gift-card-grid">
-          {presentsBrl.map((gift) => (
-            <GiftCard
-              key={gift.id}
-              gift={gift}
-              quantity={selectedBrl[gift.id] || 0}
-              disabled={brlDisabled}
-              currency="BRL"
-              isProcessing={isProcessing}
-              onUpdateQuantity={updateQuantity}
-            />
-          ))}
+        <div className="giftlist-subsection">
+          <h3>Opção Brasil (BRL / PIX)</h3>
+          <div className="gift-card-grid">
+            {presentsBrl.map((gift) => (
+              <GiftCard
+                key={gift.id}
+                gift={gift}
+                quantity={selectedBrl[gift.id] || 0}
+                disabled={brlDisabled}
+                currency="BRL"
+                isProcessing={isProcessing}
+                onUpdateQuantity={updateQuantity}
+              />
+            ))}
+          </div>
         </div>
+
+        <div className="giftlist-footer">
+          <div className="giftlist-summary">
+            <strong>Selecionados:</strong> {Object.values(selectedBrl).reduce((a, b) => a + b, 0)} | Total: R$ {totalSelectedBrl.toFixed(2)}
+          </div>
+          <div className="giftlist-footer-actions">
+            <button
+              type="button"
+              className="giftlist-btn secondary"
+              onClick={() => setSelectedBrl({})}
+              disabled={isProcessing || !Object.keys(selectedBrl).length}
+            >
+              Limpar
+            </button>
+            <button
+              type="button"
+              className="giftlist-btn primary pagar-btn"
+              onClick={handleOpenConfirm}
+              disabled={isProcessing || !Object.keys(selectedBrl).length}
+            >
+              Pagar
+            </button>
+          </div>
         </div>
       </div>
-
 
       <div className="giftlist-divider"></div>
 
@@ -294,15 +327,14 @@ const GiftlistSection = () => {
 
         <div className="giftlist-footer">
           <div className="giftlist-summary">
-            <strong>Selecionados:</strong> {Object.values(selectedEur).reduce((a, b) => a + b, 0) + Object.values(selectedBrl).reduce((a, b) => a + b, 0)} | Total:{' '}
-            {Object.keys(selectedEur).length ? '€' : Object.keys(selectedBrl).length ? 'R$' : ''} {totalSelected.toFixed(2)}
+            <strong>Selecionados:</strong> {Object.values(selectedEur).reduce((a, b) => a + b, 0)} | Total: € {totalSelectedEur.toFixed(2)}
           </div>
           <div className="giftlist-footer-actions">
             <button
               type="button"
               className="giftlist-btn secondary"
-              onClick={clearSelections}
-              disabled={isProcessing || (!Object.keys(selectedEur).length && !Object.keys(selectedBrl).length)}
+              onClick={() => setSelectedEur({})}
+              disabled={isProcessing || !Object.keys(selectedEur).length}
             >
               Limpar
             </button>
@@ -310,7 +342,7 @@ const GiftlistSection = () => {
               type="button"
               className="giftlist-btn primary pagar-btn"
               onClick={handleOpenConfirm}
-              disabled={isProcessing || (!Object.keys(selectedEur).length && !Object.keys(selectedBrl).length)}
+              disabled={isProcessing || !Object.keys(selectedEur).length}
             >
               Pagar
             </button>
@@ -320,62 +352,17 @@ const GiftlistSection = () => {
 
       {message && <p className="giftlist-message error">{message}</p>}
 
-      {paymentResult && (
-        <div className="giftlist-payment-result">
-          <h4>{paymentResult.method} gerado para: {paymentResult.title}</h4>
-          <p>Valor: {paymentResult.method === 'MBWay' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
-          {paymentResult.phone && <p>Telefone: {paymentResult.phone}</p>}
-          {paymentResult.txId && <p>ID: {paymentResult.txId}</p>}
-          {paymentResult.payload && (
-            <div className="giftlist-payload">
-              <p>Payload:</p>
-              <code>{paymentResult.payload}</code>
-            </div>
-          )}
-          {paymentResult.qrCode && (
-            <div className="giftlist-qr">
-              <img src={paymentResult.qrCode} alt={`QR para ${paymentResult.method}`} />
-            </div>
-          )}
-        </div>
-      )}
-
-      {userEmail && userPayments.length > 0 && (
-        <div className="giftlist-payment-result giftlist-payment-result--with-margin">
-          <h4>{userEmail}</h4>
-          <table className="giftlist-payments-list">
-            <thead>
-              <th>
-                <td>Valor</td>
-                <td>Presente(s)</td>
-                <td>Data</td>
-              </th>
-            </thead>
-            {userPayments.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <strong>{p.payment_type}</strong> — {Number(p.amount).toFixed(2)} ({p.status})
-                </td>
-                <td>{p.description ? ` • ${p.description}` : ''}</td>
-                <td>
-                  {p.created_at ? ` • ${new Date(p.created_at).toLocaleString('pt-BR')}` : ''}</td>
-              </tr>
-            ))}
-          </table>
-        </div>
-      )}
-
       {userPayments
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((p) => {
-          if (p.status !== 'received') return null;
+          const isReceived = p.status === 'received';
           
           return (
             <section
               key={p.id}
-              className="giftlist-confirmed-section giftlist-confirmed-section--received"
+              className={`giftlist-confirmed-section ${isReceived ? 'giftlist-confirmed-section--received' : 'giftlist-confirmed-section--pending'}`}
             >
-              <h3>Presente Confirmado</h3>
+              <h3>{isReceived ? 'Presente Confirmado' : 'Pagamento Pendente'}</h3>
               <div className="giftlist-confirmed-section__content">
                 <p className="giftlist-confirmed-section__header">{p.payment_type}</p>
                 <p className="giftlist-confirmed-section__value">
@@ -396,7 +383,7 @@ const GiftlistSection = () => {
                 )}
                 {p.created_at && (
                   <p className="giftlist-confirmed-section__date">
-                    Confirmado em: {new Date(p.created_at).toLocaleString('pt-BR')}
+                    {isReceived ? 'Confirmado' : 'Criado'} em: {new Date(p.created_at).toLocaleString('pt-BR')}
                   </p>
                 )}
               </div>

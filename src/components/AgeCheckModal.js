@@ -1,3 +1,4 @@
+import { MdClose } from 'react-icons/md';
 import './AgeCheckModal.css';
 
 const AgeCheckModal = ({ isOpen, onClose, onConfirm }) => {
@@ -15,18 +16,17 @@ const AgeCheckModal = ({ isOpen, onClose, onConfirm }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h3>Adicionar Convidado</h3>
+          <h3>ATENÇÃO</h3>
           <button 
             className="modal-close-btn" 
             onClick={() => onClose()}
             title="Fechar"
           >
-            ×
+            <MdClose size={24} />
           </button>
         </div>
         
         <div className="modal-body">
-            <h3>ATENÇÃO</h3>
           <p>É criança e terá 10 anos ou menos no dia 16/03/26?</p>
         </div>
 
