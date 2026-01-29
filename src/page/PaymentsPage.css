@@ -1,0 +1,117 @@
+.payments-container {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.payments-title {
+  margin: 20px 0;
+}
+
+.payments-error {
+  color: red;
+  margin-bottom: 12px;
+}
+
+.payments-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.payments-hint {
+  color: #555;
+  margin: 0;
+}
+
+.refresh-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-white-border);
+  background: var(--color-white-bg);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.refresh-button:hover {
+  background: var(--color-white-border);
+  border-color: var(--color-white-bg);
+}
+
+.refresh-button:active {
+  background: var(--color-white-bg);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-white-bg);
+  border: 1px solid var(--color-white-border);
+}
+
+.payments-table thead {
+  background: var(--color-white-border);
+}
+
+.payments-table th,
+.payments-table td {
+  padding: 10px;
+  font-size: 14px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.payments-table th {
+  border-bottom: 1px solid var(--color-white-border);
+  color: var(--color-gray-medium);
+}
+
+.payments-table tr {
+  border-bottom: 1px solid var(--color-white-border);
+}
+
+.status-select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--color-white-border);
+  min-width: 130px;
+}
+
+.message-input {
+  width: 100%;
+  min-width: 200px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--color-white-border);
+  font-size: 14px;
+  resize: vertical;
+}
+
+.save-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-green-save);
+  color: var(--color-white-bg);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.save-button:hover {
+  background: var(--color-green-hover);
+}
+
+.save-button:active {
+  background: var(--color-green-save);
+}
+
+.save-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}

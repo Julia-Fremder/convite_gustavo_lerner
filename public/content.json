@@ -1,0 +1,306 @@
+{
+  "invite_bm_title": "Fabio Lerner e Júlia Fremder convidam para o Bar Mitzvah de seu filho",
+  "invite_bm_name": "Gustavo Lerner",
+  "invite_bm_img": {
+    "src": "/assets/images/torah-ezgif.com-slow-speed.gif",
+    "alt": "torah opening and closing",
+    "class": "invite_gif"
+  },
+  "invite_divider": {
+    "src": "/assets/images/calligraphic-ornamental-divider-collection.png",
+    "alt": "Website divider",
+    "class": "invite-divider"
+  },
+  "invite_wd_img": {
+    "src": "/assets/images/FabioEJulia.gif",
+    "alt": "Julia singing and kissing Fabio",
+    "class": "invite-gif"
+  },
+  "invite_wd_title": "Guga e Gabi convidam para o casamento dos seus pais",
+  "invite_wd_name": "Fabio & Júlia",
+  "videos_title": "Guga sendo Guga",
+  "photos_title": "Os noivos...",
+  "plate_options": [
+    {
+      "value": "carne",
+      "label": "Miminhos de novilho com cogumelos frescos, arroz branco e legumes salteados"
+    },
+    {
+      "value": "peixe",
+      "label": "Supremo de salmão com ervas e alho, batata assada e espinafres"
+    },
+    {
+      "value": "vegetariano",
+      "label": "Tagliatelle com legumes e cogumelos frescos salteados"
+    },
+    {
+      "value": "creme_de_legumes",
+      "label": "Crianças que não comem os outros pratos podem pedir creme de legumes"
+    }
+  ],
+  "youtube_links": [
+    {
+      "url": "https://www.youtube.com/watch?v=Irewz2m2Dwo&list=PLF5vw7gjASWBv-XQ9aBaAi3A5rbbnYt9k&index=3",
+      "title": "O Guga!!"
+    }
+  ],
+  "photo_gallery": [
+    {
+      "id": "2008_05",
+      "src": "/assets/images/2008_05.jpg",
+      "alt": "Fabio e Julia em maio de 2008"
+    },
+    {
+      "id": "2009_02",
+      "src": "/assets/images/2009_02.jpg",
+      "alt": "Fabio e Julia em fevereiro de 2009"
+    },
+    {
+      "id": "2009_02.1",
+      "alt": "Fabio e Julia em fevereiro de 2009",
+      "src": "/assets/images/2009_02.1.jpg"
+    },
+    {
+      "id": "2010_04",
+      "src": "/assets/images/2010_04.jpg",
+      "alt": "Fabio e Julia em abril de 2010"
+    },
+    {
+      "id": "2010_06",
+      "alt": "Fabio e Julia em junho de 2006",
+      "src": "/assets/images/2010_06.jpg"
+    },
+    {
+      "id": "2011_05",
+      "src": "/assets/images/2011_05.jpg",
+      "alt": "Fabio e Julia em maio de 2011"
+    },
+    {
+      "id": "2011_06",
+      "src": "/assets/images/2011_06.jpg",
+      "alt": "Fabio e Julia em junho de 2011"
+    },
+    {
+      "id": "2015_05",
+      "src": "/assets/images/2015_05.jpg",
+      "alt": "Fabio e Julia em maio de 2015"
+    },
+    {
+      "id": "2015_10",
+      "src": "/assets/images/2015_10.jpg",
+      "alt": "Fabio e Julia em outubro de 2015"
+    },
+    {
+      "id": "2015_12",
+      "src": "/assets/images/2015_12.jpg",
+      "alt": "Fabio e Julia em dezembro de 2015"
+    },
+    {
+      "id": "2021_05",
+      "src": "/assets/images/2021_05.jpeg",
+      "alt": "Fabio e Julia em maio de 2021"
+    }
+  ],
+  "video_gallery": [
+    {
+      "id": "video_1",
+      "src": "/assets/videos/seco_molhado.mp4"
+    },
+    {
+      "id": "video_2",
+      "src": "/assets/videos/guga_medico.mp4"
+    },
+    {
+      "id": "video_3",
+      "src": "/assets/videos/guga_luta_gabi.mp4"
+    },
+    {
+      "id": "video_4",
+      "type": "youtube",
+      "src": "https://www.youtube.com/watch?v=Irewz2m2Dwo&list=PLF5vw7gjASWBv-XQ9aBaAi3A5rbbnYt9k&index=3",
+      "title": "YouTube Video"
+    }
+  ],
+  "presents_eur": [
+    {
+      "id": "eur_1",
+      "title": "Jantar romantico em Lisboa",
+      "price": 85,
+      "currency": "EUR",
+      "img": "/assets/images/dinner.jpg",
+      "phone": "911191515",
+      "description": "Um brinde aos noivos com vista pro Tejo"
+    },
+    {
+      "id": "eur_2",
+      "title": "Passeio em Porto",
+      "price": 250,
+      "currency": "EUR",
+      "img": "/assets/images/porto.jpg",
+      "phone": "911191515",
+      "description": "Bilhetes para um dia turistando em Porto"
+    },
+    {
+      "id": "eur_3",
+      "title": "Pastel de nata",
+      "price": 12,
+      "currency": "EUR",
+      "img": "/assets/images/pastel_de_nata.jpg",
+      "phone": "911191515",
+      "description": "Doces para celebrar"
+    },
+     {
+      "id": "eur_4",
+      "title": "Sushi",
+      "price": 60,
+      "currency": "EUR",
+      "img": "/assets/images/sushi.jpg",
+      "phone": "911191515",
+      "description": "Levar o Guga para comer sushi"
+    },
+    {
+      "id": "eur_5",
+      "title": "Show no verão",
+      "price": 20,
+      "currency": "EUR",
+      "img": "/assets/images/show.jpg",
+      "phone": "911191515",
+      "description": "Aproveitar o verão em Portugal com música ao vivo"
+    },
+     {
+      "id": "eur_6",
+      "title": "Vaquinha para Laptop novo",
+      "price": 100,
+      "currency": "EUR",
+      "img": "/assets/images/laptop.jpg",
+      "phone": "911191515",
+      "description": "Ajude o Guga a comprar um laptop novo para os estudos"
+    },
+    {
+      "id": "eur_7",
+      "title": "Uns headphones giros",
+      "price": 30,
+      "currency": "EUR",
+      "img": "/assets/images/phones.jpg",
+      "phone": "911191515",
+      "description": "Headphones novinhos para o Guga"
+    }
+  ],
+  "presents_brl": [
+    {
+      "id": "brl_1",
+      "title": "Jantar romantico em Lisboa",
+      "price": 200,
+      "currency": "BRL",
+      "img": "/assets/images/dinner.jpg",
+      "phone": "911191515",
+      "description": "Um brinde aos noivos com vista pro Tejo"
+    },
+    {
+      "id": "brl_2",
+      "title": "Passeio em Porto",
+      "price": 800,
+      "currency": "BRL",
+      "img": "/assets/images/porto.jpg",
+      "phone": "911191515",
+      "description": "Bilhetes para um dia turistando em Porto"
+    },
+    {
+      "id": "brl_3",
+      "title": "Pastel de nata",
+      "price": 40,
+      "currency": "BRL",
+      "img": "/assets/images/pastel_de_nata.jpg",
+      "phone": "911191515",
+      "description": "Doces para celebrar"
+    },
+     {
+      "id": "brl_4",
+      "title": "Sushi",
+      "price": 300,
+      "currency": "BRL",
+      "img": "/assets/images/sushi.jpg",
+      "phone": "911191515",
+      "description": "Levar o Guga para comer sushi"
+    },
+    {
+      "id": "brl_5",
+      "title": "Show no verão",
+      "price": 100,
+      "currency": "BRL",
+      "img": "/assets/images/show.jpg",
+      "phone": "911191515",
+      "description": "Aproveitar o verão em Portugal com música ao vivo"
+    },
+    {
+      "id": "brl_6",
+      "title": "Vaquinha para Laptop novo",
+      "price": 400,
+      "currency": "BRL",
+      "img": "/assets/images/laptop.jpg",
+      "phone": "911191515",
+      "description": "Ajude o Guga a comprar um laptop novo para os estudos"
+    },
+    {
+      "id": "brl_7",
+      "title": "Uns headphones giros",
+      "price": 120,
+      "currency": "BRL",
+      "img": "/assets/images/phones.jpg",
+      "phone": "911191515",
+      "description": "Headphones novinhos para o Guga"
+    }
+  ],
+  "presents_virtual_brl": [
+    {
+      "id": "virt_brl_1",
+      "title": "Tomar acai juntos",
+      "price": 10,
+      "currency": "BRL",
+      "img": "/assets/images/gift-virt-acai.png",
+      "description": "Acai gelado para comemorar depois da festa"
+    },
+    {
+      "id": "virt_brl_2",
+      "title": "Passar a noite num hotel",
+      "price": 400,
+      "currency": "BRL",
+      "img": "/assets/images/gift-virt-hotel.png",
+      "description": "Uma noite especial para recarregar as energias"
+    },
+    {
+      "id": "virt_brl_3",
+      "title": "Ir a um show",
+      "price": 250,
+      "currency": "BRL",
+      "img": "/assets/images/gift-virt-show.png",
+      "description": "Dois ingressos para curtir musica ao vivo"
+    }
+  ],
+  "presents_virtual_eur": [
+    {
+      "id": "virt_eur_1",
+      "title": "Tomar acai juntos",
+      "price": 8,
+      "currency": "EUR",
+      "img": "/assets/images/gift-virt-acai.png",
+      "description": "Acai gelado para comemorar depois da festa"
+    },
+    {
+      "id": "virt_eur_2",
+      "title": "Passar a noite num hotel",
+      "price": 70,
+      "currency": "EUR",
+      "img": "/assets/images/gift-virt-hotel.png",
+      "description": "Uma noite especial para recarregar as energias"
+    },
+    {
+      "id": "virt_eur_3",
+      "title": "Ir a um show",
+      "price": 50,
+      "currency": "EUR",
+      "img": "/assets/images/gift-virt-show.png",
+      "description": "Dois ingressos para curtir musica ao vivo"
+    }
+  ]
+}
