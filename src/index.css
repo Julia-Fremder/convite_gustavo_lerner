@@ -233,6 +233,7 @@ section {
 .modal-card h4 {
     margin-bottom: 12px;
     color: var(--color-gray-dark);
+    font-family: var(--font-noto-sans);
 }
 
 .confirm-guests {

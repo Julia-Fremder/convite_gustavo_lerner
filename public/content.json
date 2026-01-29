@@ -148,6 +148,15 @@
       "img": "/assets/images/pastel_de_nata.jpg",
       "phone": "911191515",
       "description": "Doces para celebrar"
+    },
+     {
+      "id": "eur_4",
+      "title": "Sushi",
+      "price": 40,
+      "currency": "EUR",
+      "img": "/assets/images/pastel_de_nata.jpg",
+      "phone": "911191515",
+      "description": "Levar o Guga para comer sushi"
     }
   ],
   "presents_brl": [
@@ -155,7 +164,7 @@
       "id": "brl_1",
       "title": "Jantar romantico em Lisboa",
       "price": 120,
-      "currency": "EUR",
+      "currency": "BRL",
       "img": "/assets/images/dinner.jpg",
       "phone": "911191515",
       "description": "Um brinde aos noivos com vista pro Tejo"
@@ -164,7 +173,7 @@
       "id": "brl_2",
       "title": "Passeio em Porto",
       "price": 250,
-      "currency": "EUR",
+      "currency": "BRL",
       "img": "/assets/images/porto.jpg",
       "phone": "911191515",
       "description": "Bilhetes para um dia turistando em Porto"
@@ -173,10 +182,19 @@
       "id": "brl_3",
       "title": "Pastel de nata",
       "price": 40,
-      "currency": "EUR",
+      "currency": "BRL",
       "img": "/assets/images/pastel_de_nata.jpg",
       "phone": "911191515",
       "description": "Doces para celebrar"
+    },
+     {
+      "id": "brl_4",
+      "title": "Sushi",
+      "price": 150,
+      "currency": "BRL",
+      "img": "/assets/images/pastel_de_nata.jpg",
+      "phone": "911191515",
+      "description": "Levar o Guga para comer sushi"
     }
   ],
   "presents_virtual_brl": [

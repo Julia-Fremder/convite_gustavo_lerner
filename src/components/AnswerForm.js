@@ -158,7 +158,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
           const price = guest.isChild ? 'child' : 'adult';
           return confirmationAPI.post({
               Email: email,
-              Guest: guest.name,
+              Name: guest.name,
               PlateOption: guest.plate,
               Price: price,
           })

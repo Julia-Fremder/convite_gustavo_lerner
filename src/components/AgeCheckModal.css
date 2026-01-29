@@ -44,10 +44,7 @@
   margin: 0;
   font-size: 18px;
   color: var(--color-gray-dark);
-}
-
-.modal-close-btn {
-  background: none;
+    font-family: var(--font-noto-sans);
   border: none;
   font-size: 28px;
   cursor: pointer;

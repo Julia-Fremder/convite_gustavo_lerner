@@ -13,7 +13,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const isPaymentsRoute = window.location.pathname === '/payments';
 
-  const getContent = useCallback(async () => 
+  const getContent = useCallback(async () =>
     contentAPI.fetch()
       .then(result => {
         setContent(result);
@@ -48,38 +48,36 @@ const App = () => {
 
   return (
     <div className="container">
-      <InviteSection 
+      <InviteSection
         title={content.invite_bm_title}
         name={content.invite_bm_name}
         img={content.invite_bm_img}
       />
-      
-      <img 
-        src={content.invite_divider.src} 
+
+      <img
+        src={content.invite_divider.src}
         alt={content.invite_divider.alt}
         className="invite-divider"
       />
-      
-      <InviteSection 
+
+      <InviteSection
         title={content.invite_wd_title}
         name={content.invite_wd_name}
         img={content.invite_wd_img}
       />
-      
-      
-      <CarouselSection 
+
+      <InfoSection />
+
+      <AnswerForm plateOptions={content.plate_options || []} />
+
+      <GiftlistSection />
+
+      <CarouselSection
         videosTitle={content.videos_title}
         photosTitle={content.photos_title}
         videos={content.video_gallery}
         photos={content.photo_gallery}
       />
-      
-      <InfoSection />
-
-      <AnswerForm plateOptions={content.plate_options || []} />
-
-      
-      <GiftlistSection />
     </div>
   );
 }

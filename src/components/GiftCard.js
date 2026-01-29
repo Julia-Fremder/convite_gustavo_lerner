@@ -20,9 +20,6 @@ const GiftCard = ({ gift, quantity, disabled, currency, isProcessing, onUpdateQu
       <div className="gift-card__footer">
         <p className="gift-card__price">
           {currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
-          {isSelected && (
-            <span className="gift-card__total"> × {quantity} = {currency === 'EUR' ? '€' : 'R$'} {totalPrice.toFixed(2)}</span>
-          )}
         </p>
         <div className="gift-card__quantity-controls">
           <button

@@ -416,14 +416,25 @@ const GiftlistSection = () => {
             <div className="confirm-guests">
               <strong>Itens selecionados:</strong>
               <ul>
-                {(selectedEur.length ? selectedEur : selectedBrl).map((gift) => (
-                  <li key={gift.id}>
-                    {gift.title} — {gift.currency === 'EUR' ? '€' : 'R$'} {Number(gift.price).toFixed(2)}
-                  </li>
-                ))}
+                {(() => {
+                  const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
+                  const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
+                  const currency = Object.keys(selectedEur).length ? 'EUR' : 'BRL';
+                  
+                  return Object.entries(quantities).map(([giftId, qty]) => {
+                    const gift = presents.find(p => p.id === giftId);
+                    if (!gift) return null;
+                    const itemTotal = Number(gift.price) * qty;
+                    return (
+                      <li key={giftId}>
+                        {gift.title} ({qty}x) — {currency === 'EUR' ? '€' : 'R$'} {itemTotal.toFixed(2)}
+                      </li>
+                    );
+                  });
+                })()}
               </ul>
               <p>
-                <strong>Total:</strong> {selectedEur.length ? '€' : 'R$'} {totalSelected.toFixed(2)}
+                <strong>Total:</strong> {Object.keys(selectedEur).length ? '€' : 'R$'} {totalSelected.toFixed(2)}
               </p>
             </div>
             <div className="modal-form-group">

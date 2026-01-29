@@ -24,6 +24,7 @@
 .modal-card h4 {
     margin-bottom: 12px;
     color: var(--color-gray-dark);
+    font-family: var(--font-noto-sans);
 }
 
 .confirm-guests {
@@ -67,24 +68,27 @@
 }
 
 .modal-button.primary {
-    background: var(--color-green-save);
+    background: var(--color-beige-light);
     color: var(--color-white-bg);
-    box-shadow: var(--color-green-shadow);
+    text-shadow: 0.5px 0.5px 1px var(--color-beige-dark);
+    border: 1px solid var(--color-beige-light);
 }
 
 .modal-button.primary:hover {
-    background: var(--color-green-hover);
+    background: var(--color-beige-medium);
+    border-color: var(--color-beige-medium);
     transform: translateY(-1px);
 }
 
 .modal-button.secondary {
-    background: var(--color-white-bg);
-    color: var(--color-gray-dark);
-    border: 1px solid var(--color-white-border);
+    background: transparent;
+    color: var(--color-beige-dark);
+    border: 1px solid var(--color-beige-medium);
 }
 
 .modal-button.secondary:hover {
-    background: var(--color-white-border);
+    background: var(--color-beige-light);
+    border-color: var(--color-beige-dark);
     transform: translateY(-1px);
 }
 

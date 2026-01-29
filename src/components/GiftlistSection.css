@@ -7,7 +7,7 @@
 }
 
 .giftlist-section h2 {
-    font-family: var(--font-cursive);
+    font-family: var(--font-noto-sans);
     font-weight: 700;
     font-size: 32px;
     color: #3a321f;
@@ -43,7 +43,7 @@
 }
 
 .giftlist-subsection h3 {
-    font-family: var(--font-cursive);
+    font-family: var(--font-noto-sans);
     font-weight: 700;
     font-size: 24px;
     color: #3a321f;
@@ -116,12 +116,13 @@
 }
 
 .giftlist-btn.primary {
-    background: #4caf50;
-    color: #fff;
+    background: var(--color-beige-light);
+    color: var(--color-white-bg);
+    text-shadow: 0.5px 0.5px 1px var(--color-beige-dark);
 }
 
 .giftlist-btn.primary:hover:not(:disabled) {
-    background: #45a049;
+    background: var(--color-beige-medium);
     transform: translateY(-1px);
 }
 
@@ -171,6 +172,7 @@
 .giftlist-payment-result h4 {
     margin-top: 0;
     color: #155724;
+    font-family: var(--font-noto-sans);
 }
 
 .giftlist-payload {
@@ -215,6 +217,7 @@
     margin-bottom: 16px;
     text-align: center;
     font-size: 24px;
+    font-family: var(--font-noto-sans);
 }
 
 .giftlist-confirmed-section__content {
@@ -276,6 +279,7 @@
 
 .giftlist-confirmed-section--received h3 {
     color: #2d5a2d;
+    font-family: var(--font-noto-sans);
 }
 
 .giftlist-confirmed-section--received .giftlist-confirmed-section__content {
@@ -297,6 +301,7 @@
 
 .giftlist-confirmed-section--pending h3 {
     color: #8a6d1a;
+    font-family: var(--font-noto-sans);
 }
 
 .giftlist-confirmed-section--pending .giftlist-confirmed-section__content {
