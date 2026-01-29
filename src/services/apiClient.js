@@ -104,8 +104,7 @@ export const healthAPI = {
 export const contentAPI = {
   fetch: async () => {
     try {
-      const url = `${process.env.PUBLIC_URL || ''}/content.json`;
-      const response = await fetch(url);
+      const response = await fetch('/content.json');
       if (!response.ok) {
         throw new Error(`Failed to fetch content: ${response.statusText}`);
       }
