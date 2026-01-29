@@ -11,8 +11,8 @@ const GiftlistSection = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
   const [paymentResult, setPaymentResult] = useState(null);
-  const [selectedEur, setSelectedEur] = useState([]);
-  const [selectedBrl, setSelectedBrl] = useState([]);
+  const [selectedEur, setSelectedEur] = useState({}); // { [giftId]: quantity }
+  const [selectedBrl, setSelectedBrl] = useState({}); // { [giftId]: quantity }
   const [eurDisabled, setEurDisabled] = useState(false);
   const [brlDisabled, setBrlDisabled] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -25,8 +25,8 @@ const GiftlistSection = () => {
   const presentsBrl = content?.presents_brl || [];
 
   useEffect(() => {
-    setEurDisabled(selectedBrl.length > 0);
-    setBrlDisabled(selectedEur.length > 0);
+    setEurDisabled(Object.keys(selectedBrl).length > 0);
+    setBrlDisabled(Object.keys(selectedEur).length > 0);
   }, [selectedBrl, selectedEur]);
 
   useEffect(() => {
@@ -66,28 +66,44 @@ const GiftlistSection = () => {
   }, [userEmail, refreshUserPayments]);
 
   const totalSelected = useMemo(() => {
-    const list = selectedEur.length ? selectedEur : selectedBrl;
-    return list.reduce((sum, item) => sum + Number(item.price || 0), 0);
-  }, [selectedEur, selectedBrl]);
+    const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
+    const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
+    return Object.entries(quantities).reduce((sum, [giftId, qty]) => {
+      const gift = presents.find(p => p.id === giftId);
+      return sum + (gift ? Number(gift.price || 0) * qty : 0);
+    }, 0);
+  }, [selectedEur, selectedBrl, presentsEur, presentsBrl]);
 
-  const toggleSelect = (gift, currency) => {
+  const updateQuantity = (gift, currency, change) => {
     if (currency === 'EUR' && eurDisabled) return;
     if (currency === 'BRL' && brlDisabled) return;
 
     if (currency === 'EUR') {
-      setSelectedEur((prev) =>
-        prev.find((g) => g.id === gift.id)
-          ? prev.filter((g) => g.id !== gift.id)
-          : [...prev, gift]
-      );
-      setSelectedBrl([]);
+      setSelectedEur((prev) => {
+        const currentQty = prev[gift.id] || 0;
+        const newQty = Math.max(0, currentQty + change);
+        const updated = { ...prev };
+        if (newQty === 0) {
+          delete updated[gift.id];
+        } else {
+          updated[gift.id] = newQty;
+        }
+        return updated;
+      });
+      if (change > 0) setSelectedBrl({});
     } else {
-      setSelectedBrl((prev) =>
-        prev.find((g) => g.id === gift.id)
-          ? prev.filter((g) => g.id !== gift.id)
-          : [...prev, gift]
-      );
-      setSelectedEur([]);
+      setSelectedBrl((prev) => {
+        const currentQty = prev[gift.id] || 0;
+        const newQty = Math.max(0, currentQty + change);
+        const updated = { ...prev };
+        if (newQty === 0) {
+          delete updated[gift.id];
+        } else {
+          updated[gift.id] = newQty;
+        }
+        return updated;
+      });
+      if (change > 0) setSelectedEur({});
     }
 
     setPaymentResult(null);
@@ -95,8 +111,8 @@ const GiftlistSection = () => {
   };
 
   const clearSelections = () => {
-    setSelectedEur([]);
-    setSelectedBrl([]);
+    setSelectedEur({});
+    setSelectedBrl({});
     setPaymentResult(null);
     setMessage('');
     setEurDisabled(false);
@@ -126,8 +142,8 @@ const GiftlistSection = () => {
       setMessage('');
       setPaymentResult(null);
 
-      const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
-      const desc = items.map((i) => i.title).join(' | ');
+      const total = items.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0);
+      const desc = items.map((i) => `${i.title} (${i.quantity}x)`).join(' | ');
       const phone = items[0]?.phone; // Payment destination (from gift item)
 
       const result = await paymentAPI.generateMbway({
@@ -167,8 +183,8 @@ const GiftlistSection = () => {
       setMessage('');
       setPaymentResult(null);
 
-      const total = items.reduce((sum, item) => sum + Number(item.price || 0), 0);
-      const desc = items.map((i) => i.title).join(' | ');
+      const total = items.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0);
+      const desc = items.map((i) => `${i.title} (${i.quantity}x)`).join(' | ');
 
       const result = await paymentAPI.generatePix({
         amount: total,
@@ -194,7 +210,7 @@ const GiftlistSection = () => {
   };
 
   const handleOpenConfirm = () => {
-    if (!selectedEur.length && !selectedBrl.length) {
+    if (!Object.keys(selectedEur).length && !Object.keys(selectedBrl).length) {
       setMessage('Selecione ao menos um presente.');
       return;
     }
@@ -207,11 +223,18 @@ const GiftlistSection = () => {
   };
 
   const handleConfirmPayment = async () => {
-    const items = selectedEur.length ? selectedEur : selectedBrl;
+    const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
+    const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
+    
+    const items = Object.entries(quantities).map(([giftId, qty]) => {
+      const gift = presents.find(p => p.id === giftId);
+      return { ...gift, quantity: qty };
+    });
+    
     if (!items.length) return;
 
     setShowConfirmModal(false);
-    if (selectedEur.length) {
+    if (Object.keys(selectedEur).length) {
       await handleMbway(items);
     } else {
       await handlePix(items);
@@ -229,6 +252,7 @@ const GiftlistSection = () => {
   return (
     <section className="giftlist-section">
       <h2>Presentes</h2>
+      <div className="giftlist-container">
       <div className="giftlist-subsection">
         <h3>Opção Brasil (BRL / PIX)</h3>
         <div className="gift-card-grid">
@@ -236,13 +260,14 @@ const GiftlistSection = () => {
             <GiftCard
               key={gift.id}
               gift={gift}
-              isSelected={!!selectedBrl.find((g) => g.id === gift.id)}
+              quantity={selectedBrl[gift.id] || 0}
               disabled={brlDisabled}
               currency="BRL"
               isProcessing={isProcessing}
-              onToggleSelect={toggleSelect}
+              onUpdateQuantity={updateQuantity}
             />
           ))}
+        </div>
         </div>
       </div>
 
@@ -257,11 +282,11 @@ const GiftlistSection = () => {
               <GiftCard
                 key={gift.id}
                 gift={gift}
-                isSelected={!!selectedEur.find((g) => g.id === gift.id)}
+                quantity={selectedEur[gift.id] || 0}
                 disabled={eurDisabled}
                 currency="EUR"
                 isProcessing={isProcessing}
-                onToggleSelect={toggleSelect}
+                onUpdateQuantity={updateQuantity}
               />
             ))}
           </div>
@@ -269,15 +294,15 @@ const GiftlistSection = () => {
 
         <div className="giftlist-footer">
           <div className="giftlist-summary">
-            <strong>Selecionados:</strong> {selectedEur.length + selectedBrl.length} | Total:{' '}
-            {selectedEur.length ? '€' : selectedBrl.length ? 'R$' : ''} {totalSelected.toFixed(2)}
+            <strong>Selecionados:</strong> {Object.values(selectedEur).reduce((a, b) => a + b, 0) + Object.values(selectedBrl).reduce((a, b) => a + b, 0)} | Total:{' '}
+            {Object.keys(selectedEur).length ? '€' : Object.keys(selectedBrl).length ? 'R$' : ''} {totalSelected.toFixed(2)}
           </div>
           <div className="giftlist-footer-actions">
             <button
               type="button"
               className="giftlist-btn secondary"
               onClick={clearSelections}
-              disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+              disabled={isProcessing || (!Object.keys(selectedEur).length && !Object.keys(selectedBrl).length)}
             >
               Limpar
             </button>
@@ -285,7 +310,7 @@ const GiftlistSection = () => {
               type="button"
               className="giftlist-btn primary pagar-btn"
               onClick={handleOpenConfirm}
-              disabled={isProcessing || (!selectedEur.length && !selectedBrl.length)}
+              disabled={isProcessing || (!Object.keys(selectedEur).length && !Object.keys(selectedBrl).length)}
             >
               Pagar
             </button>

@@ -7,7 +7,7 @@
 }
 
 .giftlist-section h2 {
-    font-family: 'Libre Baskerville', serif;
+    font-family: var(--font-cursive);
     font-weight: 700;
     font-size: 32px;
     color: #3a321f;
@@ -39,10 +39,11 @@
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.7);
     border-radius: 8px;
+    height: auto;
 }
 
 .giftlist-subsection h3 {
-    font-family: 'Libre Baskerville', serif;
+    font-family: var(--font-cursive);
     font-weight: 700;
     font-size: 24px;
     color: #3a321f;
@@ -189,7 +190,7 @@
     display: block;
     word-break: break-all;
     font-size: 11px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-noto-sans);
 }
 
 .giftlist-qr {
@@ -378,7 +379,7 @@
     display: block;
     word-break: break-all;
     font-size: 11px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-noto-sans);
 }
 
 /* User Payments List */

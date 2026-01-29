@@ -30,12 +30,32 @@
   background: var(--color-blue-shadow);
 }
 
+/* Event Details */
+.event-details {
+    background-color: rgba(191, 161, 74, 0.05);
+    padding: 30px;
+    border-radius: 8px;
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.event-details p {
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+
 .map-container {
   text-align: left;
 }
 
 .location-block {
   margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
 .location-heading {
@@ -66,12 +86,6 @@
 .copy-button:hover {
   background: var(--color-white-border);
   border-color: var(--color-white-bg);
-}
-
-.links-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
 .copy-status {

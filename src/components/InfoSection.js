@@ -30,8 +30,9 @@ const InfoSection = () => {
   return (
     <section className="info-section">
       <div className="event-details">
+        <h3>Informações</h3>
         <p className="date-row">
-          <strong>16 de março de 2026 - 10:30</strong>
+          <p style={{fontSize: '20px'}}>16 de março de 2026 - 10:30</p>
           <a
             href={icsDataUri}
             download="evento-2026-03-16.ics"
@@ -42,17 +43,9 @@ const InfoSection = () => {
             <MdOutlineEvent size={18} aria-hidden="true" />
           </a>
         </p>
-        <p><strong>Bar Mitzvah: </strong>Sinagoga de Tomar</p>
-        <p><strong>Comemoração e casamento: </strong>Quinta da Colina Verde</p>
-      </div>
-      <p className="transport-note">
-        Organizaremos transporte para quem precisar, preencha sua
-        necessidade no formulário de confirmação de presença.
-      </p>
       <div className="map-container">
-        <h4>Localizações</h4>
         <div className="location-block">
-          <h5 className="location-heading"><strong>Sinagoga de Tomar</strong></h5>
+          <h4 className="location-heading">Sinagoga de Tomar</h4>
           <p className="address-line">
             R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal
             <button
@@ -64,28 +57,21 @@ const InfoSection = () => {
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-          <div className="links-row">
-            <a href="https://www.google.com/maps/search/?api=1&query=Sinagoga+de+Tomar" target="_blank" rel="noreferrer" className="invite-link">Abrir no Google Maps</a>
-            <a href="https://waze.com/ul?q=Sinagoga%20de%20Tomar" target="_blank" rel="noreferrer" className="invite-link">Abrir no Waze</a>
-          </div>
-        </div>
         <div>
-          <p className="location-heading"><strong>Quinta da Colina Verde</strong></p>
+          <h4 className="location-heading">Quinta da Colina Verde</h4>
           <p className="address-line">
-            Quinta da Colina Verde, Portugal
+            Rua Casal de Além 98, 2435-489 Olival, Portugal
             <button
               type="button"
-              onClick={() => handleCopy('Quinta da Colina Verde, Portugal')}
+              onClick={() => handleCopy('Rua Casal de Além 98, 2435-489 Olival, Portugal')}
               className="copy-button"
               aria-label="Copiar endereço da Quinta"
             >
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-          <div className="links-row">
-            <a href="https://www.google.com/maps/search/?api=1&query=Quinta+da+Colina+Verde" target="_blank" rel="noreferrer" className="invite-link">Abrir no Google Maps</a>
-            <a href="https://waze.com/ul?q=Quinta%20da%20Colina%20Verde%20Portugal" target="_blank" rel="noreferrer" className="invite-link">Abrir no Waze</a>
-          </div>
+        </div>
+        <p style={{fontSize: '16px'}}>Para ir conosco de autocarro manda mensagem direta pelo whatsapp</p>
         </div>
         {copyStatus.message && (
           <p className={`copy-status ${copyStatus.isError ? 'is-error' : 'is-success'}`}>
@@ -93,6 +79,8 @@ const InfoSection = () => {
           </p>
         )}
       </div>
+      </div>
+
     </section>
   );
 }
