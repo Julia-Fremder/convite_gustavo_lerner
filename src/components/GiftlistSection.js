@@ -367,15 +367,15 @@ const GiftlistSection = () => {
 
       {userPayments
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .filter((p) => {
-          const isReceived = p.status === 'received';
-          const statusLabel = isReceived ?? 'Presente Confirmado';
+        .map((p) => {
+          if (p.status !== 'received') return null;
+          
           return (
             <section
               key={p.id}
-              className={`giftlist-confirmed-section ${isReceived ? 'giftlist-confirmed-section--received' : 'giftlist-confirmed-section--pending'}`}
+              className="giftlist-confirmed-section giftlist-confirmed-section--received"
             >
-              <h3>{statusLabel}</h3>
+              <h3>Presente Confirmado</h3>
               <div className="giftlist-confirmed-section__content">
                 <p className="giftlist-confirmed-section__header">{p.payment_type}</p>
                 <p className="giftlist-confirmed-section__value">
@@ -396,7 +396,7 @@ const GiftlistSection = () => {
                 )}
                 {p.created_at && (
                   <p className="giftlist-confirmed-section__date">
-                    {isReceived ? 'Confirmado em' : 'Gerado em'}: {new Date(p.created_at).toLocaleString('pt-BR')}
+                    Confirmado em: {new Date(p.created_at).toLocaleString('pt-BR')}
                   </p>
                 )}
               </div>

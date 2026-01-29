@@ -5,7 +5,7 @@ import InfoSection from './components/InfoSection';
 import CarouselSection from './components/CarouselSection';
 import AnswerForm from './components/AnswerForm';
 import GiftlistSection from './components/GiftlistSection';
-import PaymentsPage from './components/PaymentsPage';
+import PaymentsPage from './page/PaymentsPage';
 import { contentAPI } from './services/apiClient';
 
 const App = () => {
