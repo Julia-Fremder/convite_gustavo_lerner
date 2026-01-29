@@ -32,7 +32,7 @@ const InfoSection = () => {
       <div className="event-details">
         <h3>Informações</h3>
         <div className="date-row">
-          <p style={{fontSize: '20px'}}>16 de março de 2026 - 10:30</p>
+          <p style={{fontSize: '19px'}}>16 de março de 2026 - 10:30</p>
           <a
             href={icsDataUri}
             download="evento-2026-03-16.ics"

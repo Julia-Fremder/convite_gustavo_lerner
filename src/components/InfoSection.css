@@ -4,8 +4,8 @@
 }
 
 .info-section h3 {
-  font-size: 32px;
-  margin-bottom: 20px;
+  font-size: 34px;
+  margin-bottom: 12px; /* tighter title spacing */
 }
 
 .date-row {
@@ -48,8 +48,8 @@
 }
 
 .event-details p {
-    margin: 15px 0;
-    font-size: 18px;
+  margin: 15px 0;
+  font-size: 17px;
 }
 
 
@@ -64,9 +64,14 @@
   align-items: start;
 }
 
+/* Increase spacing between the two location items */
+.location-block > div {
+  margin-top: 20px;
+}
+
 .location-heading {
   margin: 0 0 12px 0;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .address-line {

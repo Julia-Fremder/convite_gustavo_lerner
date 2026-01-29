@@ -175,6 +175,15 @@
       "img": "/assets/images/laptop.jpg",
       "phone": "911191515",
       "description": "Ajude o Guga a comprar um laptop novo para os estudos"
+    },
+    {
+      "id": "eur_7",
+      "title": "Uns headphones giros",
+      "price": 30,
+      "currency": "EUR",
+      "img": "/assets/images/phones.jpg",
+      "phone": "911191515",
+      "description": "Headphones novinhos para o Guga"
     }
   ],
   "presents_brl": [
@@ -231,6 +240,15 @@
       "img": "/assets/images/laptop.jpg",
       "phone": "911191515",
       "description": "Ajude o Guga a comprar um laptop novo para os estudos"
+    },
+    {
+      "id": "brl_7",
+      "title": "Uns headphones giros",
+      "price": 120,
+      "currency": "BRL",
+      "img": "/assets/images/phones.jpg",
+      "phone": "911191515",
+      "description": "Headphones novinhos para o Guga"
     }
   ],
   "presents_virtual_brl": [
