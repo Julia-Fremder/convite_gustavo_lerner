@@ -43,7 +43,6 @@ const InfoSection = () => {
             <MdOutlineEvent size={18} aria-hidden="true" />
           </a>
         </div>
-      <div className="map-container">
         <div className="location-block">
           <h4 className="location-heading">Sinagoga de Tomar</h4>
           <p className="address-line">
@@ -57,7 +56,6 @@ const InfoSection = () => {
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-        <div>
           <h4 className="location-heading">Quinta da Colina Verde</h4>
           <p className="address-line">
             Rua Casal de Além 98, 2435-489 Olival, Portugal
@@ -70,7 +68,6 @@ const InfoSection = () => {
               <MdContentCopy size={16} /> Copiar
             </button>
           </p>
-        </div>
         <p style={{fontSize: '16px'}}>Para ir conosco de autocarro manda mensagem direta pelo whatsapp</p>
         </div>
         {copyStatus.message && (
@@ -79,8 +76,6 @@ const InfoSection = () => {
           </p>
         )}
       </div>
-      </div>
-
     </section>
   );
 }

@@ -49,12 +49,6 @@
 
 .event-details p {
   margin: 15px 0;
-  font-size: 17px;
-}
-
-
-.map-container {
-  text-align: left;
 }
 
 .location-block {
@@ -70,8 +64,11 @@
 }
 
 .location-heading {
-  margin: 0 0 12px 0;
-  font-size: 22px;
+  margin-top: 16px;
+  font-size: 26px;
+  font-family: var(--font-cursive);
+  color: var(--color-beige-medium);
+  align-items: start;
 }
 
 .address-line {
@@ -81,6 +78,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  font-size: 16px;
 }
 
 .copy-button {
