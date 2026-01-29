@@ -36,6 +36,7 @@ jobs:
       - name: Build React app
         env:
           CI: true
+          REACT_APP_API_BASE_URL: ${{ secrets.BACKEND_URL }}
         run: npm run build
 
       - name: Setup Pages
