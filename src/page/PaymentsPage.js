@@ -5,6 +5,7 @@ import './PaymentsPage.css';
 const statusOptions = [
   { value: 'pending', label: 'Pendente' },
   { value: 'received', label: 'Recebido' },
+  { value: 'canceled', label: 'Cancelado' },
 ];
 
 const PaymentsPage = () => {

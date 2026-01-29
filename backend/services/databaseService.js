@@ -131,14 +131,20 @@ const initializeDatabase = async () => {
     await client.query(`
       DO $$
       BEGIN
-        IF NOT EXISTS (
+        -- Ensure payments status allows 'pending','received','canceled'
+        IF EXISTS (
           SELECT 1 FROM pg_constraint
           WHERE conname = 'payments_status_check'
         ) THEN
-          ALTER TABLE payments
-            ADD CONSTRAINT payments_status_check
-            CHECK (status IN ('pending','received'));
+          BEGIN
+            ALTER TABLE payments DROP CONSTRAINT payments_status_check;
+          EXCEPTION WHEN undefined_object THEN NULL;
+          END;
         END IF;
+
+        ALTER TABLE payments
+          ADD CONSTRAINT payments_status_check
+          CHECK (status IN ('pending','received','canceled'));
       END
       $$;
     `);
@@ -218,7 +224,7 @@ const savePaymentRecord = async ({ email, amount, paymentType, message, descript
     throw new Error('Invalid amount');
   }
 
-  const safeStatus = status && ['pending', 'received'].includes(status) ? status : 'pending';
+  const safeStatus = status && ['pending', 'received', 'canceled'].includes(status) ? status : 'pending';
 
   try {
     await client.query(
@@ -261,7 +267,7 @@ const listPayments = async (email) => {
 const updatePaymentStatus = async (id, { status, message }) => {
   if (!id) throw new Error('Payment ID is required');
   const client = await getPool().connect();
-  const nextStatus = status && ['pending', 'received'].includes(status) ? status : 'pending';
+  const nextStatus = status && ['pending', 'received', 'canceled'].includes(status) ? status : 'pending';
 
   try {
     const { rows } = await client.query(

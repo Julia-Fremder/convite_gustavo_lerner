@@ -125,7 +125,7 @@
     {
       "id": "eur_1",
       "title": "Jantar romantico em Lisboa",
-      "price": 40,
+      "price": 85,
       "currency": "EUR",
       "img": "/assets/images/dinner.jpg",
       "phone": "911191515",
@@ -134,7 +134,7 @@
     {
       "id": "eur_2",
       "title": "Passeio em Porto",
-      "price": 25,
+      "price": 250,
       "currency": "EUR",
       "img": "/assets/images/porto.jpg",
       "phone": "911191515",
@@ -152,7 +152,7 @@
      {
       "id": "eur_4",
       "title": "Sushi",
-      "price": 40,
+      "price": 60,
       "currency": "EUR",
       "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
@@ -166,13 +166,22 @@
       "img": "/assets/images/show.jpg",
       "phone": "911191515",
       "description": "Aproveitar o verão em Portugal com música ao vivo"
+    },
+     {
+      "id": "eur_6",
+      "title": "Vaquinha para Laptop novo",
+      "price": 100,
+      "currency": "EUR",
+      "img": "/assets/images/laptop.jpg",
+      "phone": "911191515",
+      "description": "Ajude o Guga a comprar um laptop novo para os estudos"
     }
   ],
   "presents_brl": [
     {
       "id": "brl_1",
       "title": "Jantar romantico em Lisboa",
-      "price": 120,
+      "price": 200,
       "currency": "BRL",
       "img": "/assets/images/dinner.jpg",
       "phone": "911191515",
@@ -181,7 +190,7 @@
     {
       "id": "brl_2",
       "title": "Passeio em Porto",
-      "price": 250,
+      "price": 800,
       "currency": "BRL",
       "img": "/assets/images/porto.jpg",
       "phone": "911191515",
@@ -199,7 +208,7 @@
      {
       "id": "brl_4",
       "title": "Sushi",
-      "price": 150,
+      "price": 300,
       "currency": "BRL",
       "img": "/assets/images/sushi.jpg",
       "phone": "911191515",
@@ -213,6 +222,15 @@
       "img": "/assets/images/show.jpg",
       "phone": "911191515",
       "description": "Aproveitar o verão em Portugal com música ao vivo"
+    },
+    {
+      "id": "brl_6",
+      "title": "Vaquinha para Laptop novo",
+      "price": 400,
+      "currency": "BRL",
+      "img": "/assets/images/laptop.jpg",
+      "phone": "911191515",
+      "description": "Ajude o Guga a comprar um laptop novo para os estudos"
     }
   ],
   "presents_virtual_brl": [

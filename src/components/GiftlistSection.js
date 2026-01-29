@@ -20,6 +20,7 @@ const GiftlistSection = () => {
   const [userEmail, setUserEmail] = useState(storedEmail || '');
   const [userMessage, setUserMessage] = useState('');
   const [userPayments, setUserPayments] = useState([]);
+  const [showReceivedDetails, setShowReceivedDetails] = useState(true);
 
   const presentsEur = content?.presents_eur || [];
   const presentsBrl = content?.presents_brl || [];
@@ -82,6 +83,18 @@ const GiftlistSection = () => {
   const totalSelected = useMemo(() => {
     return Object.keys(selectedEur).length ? totalSelectedEur : totalSelectedBrl;
   }, [selectedEur, totalSelectedEur, totalSelectedBrl]);
+
+  const totalReceivedEur = useMemo(() => {
+    return (userPayments || [])
+      .filter((p) => p.status === 'received' && p.payment_type === 'MBWay')
+      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  }, [userPayments]);
+
+  const totalReceivedBrl = useMemo(() => {
+    return (userPayments || [])
+      .filter((p) => p.status === 'received' && p.payment_type === 'PIX')
+      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  }, [userPayments]);
 
   const updateQuantity = (gift, currency, change) => {
     if (currency === 'EUR' && eurDisabled) return;
@@ -352,17 +365,59 @@ const GiftlistSection = () => {
 
       {message && <p className="giftlist-message error">{message}</p>}
 
+      {/* Show only pending or confirmed; hide canceled */}
       {userPayments
+        .filter((p) => p.status === 'pending' || p.status === 'received')
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((p) => {
           const isReceived = p.status === 'received';
-          
-          return (
+
+          if (!isReceived) {
+            // Render pending as a compact inline widget with close/cancel
+            return (
+              <div key={p.id} className="pending-widget">
+                <span className="pending-widget__label">Pagamento pendente</span>
+                <span className="pending-widget__info">
+                  {p.payment_type} • {Number(p.amount).toFixed(2)}
+                  {p.description ? ` • ${p.description}` : ''}
+                </span>
+                <button
+                  className="pending-widget__close"
+                  title="Cancelar pagamento"
+                  onClick={async () => {
+                    try {
+                      await paymentAPI.update(p.id, { status: 'canceled' });
+                      setUserPayments((prev) => prev.filter((x) => x.id !== p.id));
+                      // Refresh from server to ensure consistency
+                      refreshUserPayments(userEmail);
+                    } catch (err) {
+                      setMessage(err.message || 'Não foi possível cancelar o pagamento.');
+                    }
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            );
+          }
+
+          // Received: show details unless closed; close does not change status
+          return showReceivedDetails ? (
             <section
               key={p.id}
-              className={`giftlist-confirmed-section ${isReceived ? 'giftlist-confirmed-section--received' : 'giftlist-confirmed-section--pending'}`}
+              className={`giftlist-confirmed-section giftlist-confirmed-section--received`}
             >
-              <h3>{isReceived ? 'Presente Confirmado' : 'Pagamento Pendente'}</h3>
+              <div className="received-header">
+                <h3>Presente Confirmado</h3>
+                <button
+                  type="button"
+                  className="received-close-btn"
+                  title="Fechar"
+                  onClick={() => setShowReceivedDetails(false)}
+                >
+                  ×
+                </button>
+              </div>
               <div className="giftlist-confirmed-section__content">
                 <p className="giftlist-confirmed-section__header">{p.payment_type}</p>
                 <p className="giftlist-confirmed-section__value">
@@ -383,13 +438,26 @@ const GiftlistSection = () => {
                 )}
                 {p.created_at && (
                   <p className="giftlist-confirmed-section__date">
-                    {isReceived ? 'Confirmado' : 'Criado'} em: {new Date(p.created_at).toLocaleString('pt-BR')}
+                    Confirmado em: {new Date(p.created_at).toLocaleString('pt-BR')}
                   </p>
                 )}
               </div>
             </section>
-          );
+          ) : null;
         })}
+
+      {/* Summary note: show total received in small letters under gift section */}
+      {(totalReceivedEur > 0 || totalReceivedBrl > 0) && (
+        <p className="total-received-note">
+          Total recebido:
+          {totalReceivedBrl > 0 && (
+            <span> R$ {totalReceivedBrl.toFixed(2)}</span>
+          )}
+          {totalReceivedEur > 0 && (
+            <span> • € {totalReceivedEur.toFixed(2)}</span>
+          )}
+        </p>
+      )}
 
       <img
         src="/assets/images/obrigado.gif"

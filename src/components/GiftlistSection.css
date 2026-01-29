@@ -293,6 +293,29 @@
     color: #2d5a2d;
 }
 
+.received-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.received-close-btn {
+    appearance: none;
+    border: none;
+    background: #e6f5e6;
+    color: #2d5a2d;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.received-close-btn:hover {
+    background: #cff0cf;
+}
+
 .giftlist-confirmed-section--pending {
     background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
     border: 2px solid #f6c343;
@@ -313,6 +336,46 @@
 .giftlist-confirmed-section--pending .giftlist-confirmed-section__status,
 .giftlist-confirmed-section--pending .giftlist-confirmed-section__description {
     color: #8a6d1a;
+}
+
+/* Compact Pending Widget */
+.pending-widget {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff8e1;
+    border: 1px solid #f6c343;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.pending-widget__label {
+    font-weight: 700;
+    color: #8a6d1a;
+}
+
+.pending-widget__info {
+    flex: 1;
+    color: #58450a;
+    font-size: 14px;
+}
+
+.pending-widget__close {
+    appearance: none;
+    border: none;
+    background: #fce6a1;
+    color: #8a6d1a;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.pending-widget__close:hover {
+    background: #f9d87a;
 }
 
 /* Modal Styles */
@@ -397,6 +460,12 @@
 
 .giftlist-payments-list tr, th {
     margin-bottom: 8px;
+}
+
+.total-received-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #6b6b6b;
 }
 .giftlist-payments-list th {
     text-align: left;
