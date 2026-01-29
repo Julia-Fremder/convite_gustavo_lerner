@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/convite_gustavo_lerner/static/css/main.78cd3785.css",
-    "main.js": "/convite_gustavo_lerner/static/js/main.89b6f37a.js",
+    "main.js": "/convite_gustavo_lerner/static/js/main.aa014072.js",
     "index.html": "/convite_gustavo_lerner/index.html",
     "main.78cd3785.css.map": "/convite_gustavo_lerner/static/css/main.78cd3785.css.map",
-    "main.89b6f37a.js.map": "/convite_gustavo_lerner/static/js/main.89b6f37a.js.map"
+    "main.aa014072.js.map": "/convite_gustavo_lerner/static/js/main.aa014072.js.map"
   },
   "entrypoints": [
     "static/css/main.78cd3785.css",
-    "static/js/main.89b6f37a.js"
+    "static/js/main.aa014072.js"
   ]
 }
