@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/convite_gustavo_lerner/static/css/main.b65cdd50.css",
+    "main.js": "/convite_gustavo_lerner/static/js/main.cacf879b.js",
+    "index.html": "/convite_gustavo_lerner/index.html",
+    "main.b65cdd50.css.map": "/convite_gustavo_lerner/static/css/main.b65cdd50.css.map",
+    "main.cacf879b.js.map": "/convite_gustavo_lerner/static/js/main.cacf879b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b65cdd50.css",
+    "static/js/main.cacf879b.js"
+  ]
+}
