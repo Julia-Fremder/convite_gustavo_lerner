@@ -5,7 +5,7 @@
  * Centralized HTTP request handler for all API calls
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://convite-gustavo-lerner.onrender.com';
 
 /**
  * Generic request handler with error handling
