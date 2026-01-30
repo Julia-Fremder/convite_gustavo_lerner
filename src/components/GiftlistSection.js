@@ -377,7 +377,7 @@ const GiftlistSection = () => {
             // Render pending as a compact inline widget with close/cancel
             return (
               <div key={p.id} className="pending-widget">
-                <span className="pending-widget__label">Pagamento pendente</span>
+                <span className="pending-widget__label">Pagamento pendente (será confirmado manualmente)</span>
                 <span className="pending-widget__info">
                   {p.payment_type} • {Number(p.amount).toFixed(2)}
                   {p.description ? ` • ${p.description}` : ''}
