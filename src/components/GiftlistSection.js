@@ -236,15 +236,17 @@ const GiftlistSection = () => {
       setMessage('Selecione ao menos um presente.');
       return;
     }
+    nst handleConfirmPayment = async () => {
     if (!userEmail.trim()) {
+      setMessage('Informe um email para gerar o pagamento.;
+      return;
+    }
+if (!userEmail.trim()) {
       setMessage('Informe um email para gerar o pagamento.');
       return;
     }
-    setMessage('');
-    setShowConfirmModal(true);
-  };
 
-  const handleConfirmPayment = async () => {
+    
     const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
     const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
     
