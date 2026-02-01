@@ -46,6 +46,8 @@ const App = () => {
     return <div className="container"><p>Erro ao carregar o conteúdo</p></div>;
   }
 
+  const publicUrl = process.env.PUBLIC_URL || '';
+
   return (
     <div className="container">
       <InviteSection
@@ -55,7 +57,7 @@ const App = () => {
       />
 
       <img
-        src={content.invite_divider.src}
+        src={`${publicUrl}${content.invite_divider.src}`}
         alt={content.invite_divider.alt}
         className="invite-divider"
       />

@@ -17,8 +17,10 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
     width: 100%;
     max-width: 520px;
+    max-height: 90vh;
     padding: 20px 22px;
     animation: fadeIn 0.2s ease;
+    overflow-y: auto;
 }
 
 .modal-card h4 {

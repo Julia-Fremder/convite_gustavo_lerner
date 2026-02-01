@@ -236,15 +236,16 @@ const GiftlistSection = () => {
       setMessage('Selecione ao menos um presente.');
       return;
     }
-    if (!userEmail.trim()) {
-      setMessage('Informe um email para gerar o pagamento.');
-      return;
-    }
     setMessage('');
     setShowConfirmModal(true);
   };
 
   const handleConfirmPayment = async () => {
+    if (!userEmail.trim()) {
+      setMessage('Informe um email para gerar o pagamento.');
+      return;
+    }
+
     const quantities = Object.keys(selectedEur).length ? selectedEur : selectedBrl;
     const presents = Object.keys(selectedEur).length ? presentsEur : presentsBrl;
     
@@ -376,7 +377,7 @@ const GiftlistSection = () => {
             // Render pending as a compact inline widget with close/cancel
             return (
               <div key={p.id} className="pending-widget">
-                <span className="pending-widget__label">Pagamento pendente</span>
+                <span className="pending-widget__label">Pagamento pendente (será confirmado manualmente)</span>
                 <span className="pending-widget__info">
                   {p.payment_type} • {Number(p.amount).toFixed(2)}
                   {p.description ? ` • ${p.description}` : ''}
@@ -460,7 +461,7 @@ const GiftlistSection = () => {
       )}
 
       <img
-        src="/assets/images/obrigado.gif"
+        src={`${process.env.PUBLIC_URL || ''}/assets/images/obrigado.gif`}
         alt="obrigado"
       />
 
