@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import InviteSection from './components/InviteSection';
 import InfoSection from './components/InfoSection';
 import CarouselSection from './components/CarouselSection';
 import AnswerForm from './components/AnswerForm';
 import GiftlistSection from './components/GiftlistSection';
-import PaymentsPage from './page/PaymentsPage';
+import AdminLogin from './page/AdminLogin';
+import AdminPage from './page/AdminPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import { contentAPI } from './services/apiClient';
 
-const App = () => {
+const HomePage = () => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const isPaymentsRoute = window.location.pathname === '/payments';
 
   const getContent = useCallback(async () =>
     contentAPI.fetch()
@@ -25,18 +27,8 @@ const App = () => {
       }), []);
 
   useEffect(() => {
-    if (!isPaymentsRoute) {
-      getContent();
-    }
-  }, [getContent, isPaymentsRoute]);
-
-  if (isPaymentsRoute) {
-    return (
-      <div className="container">
-        <PaymentsPage />
-      </div>
-    );
-  }
+    getContent();
+  }, [getContent]);
 
   if (loading) {
     return <div className="container"><p>Carregando...</p></div>;
@@ -82,6 +74,26 @@ const App = () => {
       />
     </div>
   );
-}
+};
+
+const App = () => {
+  return (
+    <Router basename={process.env.PUBLIC_URL}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;

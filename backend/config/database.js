@@ -1,6 +1,9 @@
 const { Pool } = require('pg');
 
-const DATABASE_URL = process.env.DATABASE_URL;
+// Use DEV_DATABASE_URL in development, DATABASE_URL in production
+const DATABASE_URL = process.env.NODE_ENV === 'production' 
+  ? process.env.DATABASE_URL 
+  : (process.env.DEV_DATABASE_URL || process.env.DATABASE_URL);
 
 let pool;
 

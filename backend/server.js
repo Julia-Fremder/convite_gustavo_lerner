@@ -3,16 +3,28 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
 const { saveData, getConfirmations } = require('./controllers/dataController');
 const { createPixPayment } = require('./controllers/pixController');
 const { createMbwayPayment } = require('./controllers/mbwayController');
 const { createPayment, getPayments, updatePayment } = require('./controllers/paymentsController');
+const { login, verify } = require('./controllers/authController');
 const { health } = require('./controllers/healthController');
 const { initializeDatabase } = require('./services/initializationService');
 const { DATABASE_URL } = require('./config/database');
+const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Rate limiting for login endpoint (prevent brute force)
+const loginLimiter = rateLimit({
+  windowMs: 30 * 60 * 1000, // 30 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: { success: false, error: 'Too many login attempts, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Middleware
 app.use(cors());
@@ -27,6 +39,8 @@ app.post('/api/mbway', createMbwayPayment);
 app.post('/api/payments', createPayment);
 app.get('/api/payments', getPayments);
 app.put('/api/payments/:id', updatePayment);
+app.post('/api/auth/login', loginLimiter, login);
+app.post('/api/auth/verify', verify);
 app.get('/api/health', health);
 
 // Initialize database and start server
