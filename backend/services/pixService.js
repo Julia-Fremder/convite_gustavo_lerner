@@ -42,15 +42,20 @@ const calculateCRC16 = (payload) => {
 const buildPixPayload = ({ amount, txId, description }) => {
   const merchantName = toAscii(PIX_MERCHANT_NAME, 25) || 'JULIA FREMDER';
   const merchantCity = toAscii(PIX_MERCHANT_CITY, 15) || 'RIO DE JANEIRO';
-  const desc = description ? toAscii(description, 50) : '';
-  const txid = toAscii(txId || `PIX-${uuidv4().slice(0, 8)}`, 25) || 'PIX';
+  
+  // Generate a clean alphanumeric txid
+  const rawTxId = txId || `PIX${Date.now()}`;
+  const txid = rawTxId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 25);
+  
   const amountStr = Number(amount).toFixed(2);
 
+  // Simplified merchant account info without description
   const gui = formatEMVField('00', 'BR.GOV.BCB.PIX');
   const keyField = formatEMVField('01', PIX_KEY);
-  const descField = desc ? formatEMVField('02', desc) : '';
-  const merchantAccountInfo = formatEMVField('26', `${gui}${keyField}${descField}`);
+  const merchantAccountInfo = formatEMVField('26', `${gui}${keyField}`);
 
+  const additionalDataField = formatEMVField('05', txid);
+  
   const payloadWithoutCrc = [
     formatEMVField('00', '01'),
     formatEMVField('01', '12'),
@@ -61,7 +66,7 @@ const buildPixPayload = ({ amount, txId, description }) => {
     formatEMVField('58', 'BR'),
     formatEMVField('59', merchantName),
     formatEMVField('60', merchantCity),
-    formatEMVField('62', formatEMVField('05', txid)),
+    formatEMVField('62', additionalDataField),
     '6304',
   ].join('');
 
