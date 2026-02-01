@@ -8,7 +8,8 @@ const { createPixPayment } = require('./controllers/pixController');
 const { createMbwayPayment } = require('./controllers/mbwayController');
 const { createPayment, getPayments, updatePayment } = require('./controllers/paymentsController');
 const { health } = require('./controllers/healthController');
-const { initializeDatabase, DATABASE_URL } = require('./services/databaseService');
+const { initializeDatabase } = require('./services/initializationService');
+const { DATABASE_URL } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -1,8 +1,8 @@
 const {
-  savePaymentRecord,
+  createPayment: savePaymentRecord,
   listPayments,
   updatePaymentStatus,
-} = require('../services/databaseService');
+} = require('../services/paymentService');
 
 const createPayment = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-const { saveFormData, getConfirmationsByEmail } = require('../services/databaseService');
+const { saveFormData, getConfirmationsByEmail } = require('../services/confirmationService');
 
 const saveData = async (req, res) => {
   try {
