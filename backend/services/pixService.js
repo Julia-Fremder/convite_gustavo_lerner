@@ -16,7 +16,7 @@ const toAscii = (value, maxLen) => {
 };
 
 const formatEMVField = (id, value) => {
-  const len = String(value.length).padStart(2, '0');
+  const len = value.length.toString().padStart(2, '0');
   return `${id}${len}${value}`;
 };
 

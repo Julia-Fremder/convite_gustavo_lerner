@@ -65,7 +65,7 @@ const main = async () => {
         const value = row[header];
         if (value === null || value === undefined) return '';
         // Escape values with commas or quotes
-        const stringValue = String(value);
+        const stringValue = value.toString();
         if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
           return `"${stringValue.replace(/"/g, '""')}"`;
         }

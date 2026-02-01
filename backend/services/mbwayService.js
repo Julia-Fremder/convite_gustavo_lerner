@@ -18,8 +18,8 @@ const generateMbwayPayment = async ({ amount, phone, description, txId }) => {
   }
 
   const fixedAmount = Number(numericAmount.toFixed(2));
-  const effectiveTxId = txId ? String(txId).slice(0, 25) : `MBWAY-${uuidv4().slice(0, 8)}`;
-  const desc = description ? String(description).slice(0, 80) : '';
+  const effectiveTxId = txId ? txId.toString().slice(0, 25) : `MBWAY-${uuidv4().slice(0, 8)}`;
+  const desc = description ? description.toString().slice(0, 80) : '';
 
   const payload = `MBWAY|phone:${sanitizedPhone}|amount:${fixedAmount.toFixed(2)}|txid:${effectiveTxId}${
     desc ? `|desc:${desc}` : ''

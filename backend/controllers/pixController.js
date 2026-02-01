@@ -14,8 +14,8 @@ const createPixPayment = async (req, res) => {
 
     const { payload, qrCode } = await generatePixPayment({
       amount: numericAmount,
-      description: description ? String(description) : undefined,
-      txId: txId ? String(txId) : undefined,
+      description: description ? description.toString() : undefined,
+      txId: txId ? txId.toString() : undefined,
     });
 
     res.json({
