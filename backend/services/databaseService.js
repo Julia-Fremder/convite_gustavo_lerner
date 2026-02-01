@@ -290,7 +290,7 @@ const updatePaymentStatus = async (id, { status, message }) => {
   }
 };
 
-const isDatabaseConfigured = () => Boolean(DATABASE_URL);
+const isDatabaseConfigured = () => !!DATABASE_URL;
 
 module.exports = {
   saveFormData,
