@@ -86,14 +86,14 @@ const GiftlistSection = () => {
 
   const totalReceivedEur = useMemo(() => {
     return (userPayments || [])
-      .filter((p) => p.status === 'received' && p.payment_type === 'MBWay')
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      .filter((payment) => payment.status === 'received' && payment.payment_type === 'MBWay')
+      .reduce((sum, payment) => sum + (+payment.amount) || 0, 0);
   }, [userPayments]);
 
   const totalReceivedBrl = useMemo(() => {
     return (userPayments || [])
-      .filter((p) => p.status === 'received' && p.payment_type === 'PIX')
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+      .filter((payment) => payment.status === 'received' && payment.payment_type === 'PIX')
+      .reduce((sum, payment) => sum + (+payment.amount) || 0, 0);
   }, [userPayments]);
 
   const updateQuantity = (gift, currency, change) => {
@@ -368,27 +368,27 @@ const GiftlistSection = () => {
 
       {/* Show only pending or confirmed; hide canceled */}
       {userPayments
-        .filter((p) => p.status === 'pending' || p.status === 'received')
+        .filter((payment) => payment.status === 'pending' || payment.status === 'received')
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .map((p) => {
-          const isReceived = p.status === 'received';
+        .map((payment) => {
+          const isReceived = payment.status === 'received';
 
           if (!isReceived) {
             // Render pending as a compact inline widget with close/cancel
             return (
-              <div key={p.id} className="pending-widget">
+              <div key={payment.id} className="pending-widget">
                 <span className="pending-widget__label">Pagamento pendente (será confirmado manualmente)</span>
                 <span className="pending-widget__info">
-                  {p.payment_type} • {Number(p.amount).toFixed(2)}
-                  {p.description ? ` • ${p.description}` : ''}
+                  {payment.payment_type} • {Number(payment.amount).toFixed(2)}
+                  {payment.description ? ` • ${payment.description}` : ''}
                 </span>
                 <button
                   className="pending-widget__close"
                   title="Cancelar pagamento"
                   onClick={async () => {
                     try {
-                      await paymentAPI.update(p.id, { status: 'canceled' });
-                      setUserPayments((prev) => prev.filter((x) => x.id !== p.id));
+                      await paymentAPI.update(payment.id, { status: 'canceled' });
+                      setUserPayments((prev) => prev.filter((x) => x.id !== payment.id));
                       // Refresh from server to ensure consistency
                       refreshUserPayments(userEmail);
                     } catch (err) {

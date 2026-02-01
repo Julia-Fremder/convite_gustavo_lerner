@@ -45,7 +45,7 @@ export const validateForm = (email, guests) => {
     };
   }
 
-  const invalidGuests = guests.filter(g => !g.name.trim() || !g.plate);
+  const invalidGuests = guests.filter(guest => !guest.name.trim() || !guest.plate);
   if (invalidGuests.length > 0) {
     return {
       isValid: false,
