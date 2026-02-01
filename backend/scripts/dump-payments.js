@@ -1,5 +1,7 @@
 require('dotenv').config();
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 
 const url = process.env.DATABASE_URL;
 if (!url) {
@@ -43,6 +45,7 @@ const main = async () => {
         created_at,
         updated_at
       FROM payments
+      WHERE status != 'canceled'
       ORDER BY created_at DESC
     `);
 
@@ -52,6 +55,26 @@ const main = async () => {
     }
 
     console.log(`Total: ${rows.length} payment(s)\n`);
+
+    // Export to CSV
+    const csvPath = path.join(__dirname, '..', 'payments.csv');
+    const headers = ['id', 'email', 'amount', 'payment_type', 'status', 'message', 'description', 'tx_id', 'created_at', 'updated_at'];
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => headers.map(header => {
+        const value = row[header];
+        if (value === null || value === undefined) return '';
+        // Escape values with commas or quotes
+        const stringValue = String(value);
+        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        return stringValue;
+      }).join(','))
+    ].join('\n');
+
+    fs.writeFileSync(csvPath, csvContent, 'utf8');
+    console.log(`✅ Exported to: ${csvPath}\n`);
 
     rows.forEach((row, index) => {
       console.log(`[${index + 1}] ${row.payment_type} — ${row.email}`);
