@@ -216,18 +216,22 @@ const savePaymentRecord = async ({ email, amount, paymentType, message, descript
   const client = await getPool().connect();
   const numericAmount = Number(amount);
 
+  console.log('💾 Saving payment record:', { email, amount: numericAmount, paymentType, txId });
+
   if (!email || typeof email !== 'string') {
+    console.error('❌ Database validation failed: Email is required');
     throw new Error('Email is required');
   }
 
   if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+    console.error('❌ Database validation failed: Invalid amount:', amount);
     throw new Error('Invalid amount');
   }
 
   const safeStatus = status && ['pending', 'received', 'canceled'].includes(status) ? status : 'pending';
 
   try {
-    await client.query(
+    const result = await client.query(
       `INSERT INTO payments (id, email, amount, payment_type, status, message, description, tx_id, raw_data)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
@@ -243,7 +247,11 @@ const savePaymentRecord = async ({ email, amount, paymentType, message, descript
       ]
     );
 
+    console.log('✅ Payment record inserted successfully:', { id, status: safeStatus, rowCount: result.rowCount });
     return { id, status: safeStatus };
+  } catch (dbError) {
+    console.error('❌ Database insertion error:', dbError);
+    throw dbError;
   } finally {
     client.release();
   }
@@ -292,6 +300,18 @@ const updatePaymentStatus = async (id, { status, message }) => {
 
 const isDatabaseConfigured = () => !!DATABASE_URL;
 
+const testDatabaseConnection = async () => {
+  try {
+    const client = await getPool().connect();
+    await client.query('SELECT 1');
+    client.release();
+    return { success: true, message: 'Database connection successful' };
+  } catch (error) {
+    console.error('❌ Database connection test failed:', error);
+    return { success: false, message: error.message };
+  }
+};
+
 module.exports = {
   saveFormData,
   isDatabaseConfigured,
@@ -300,5 +320,6 @@ module.exports = {
   listPayments,
   updatePaymentStatus,
   getConfirmationsByEmail,
+  testDatabaseConnection,
   DATABASE_URL,
 };

@@ -8,16 +8,21 @@ const createPayment = async (req, res) => {
   try {
     const { email, amount, paymentType, message, description, txId, raw } = req.body || {};
 
+    console.log('📝 Payment creation request:', { email, amount, paymentType, txId });
+
     if (!email || typeof email !== 'string') {
+      console.error('❌ Payment validation failed: Missing email');
       return res.status(400).json({ success: false, error: 'Email is required' });
     }
 
     if (!paymentType) {
+      console.error('❌ Payment validation failed: Missing paymentType');
       return res.status(400).json({ success: false, error: 'paymentType is required' });
     }
 
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      console.error('❌ Payment validation failed: Invalid amount:', amount);
       return res.status(400).json({ success: false, error: 'Invalid amount' });
     }
 
@@ -31,8 +36,10 @@ const createPayment = async (req, res) => {
       rawData: raw,
     });
 
+    console.log('✅ Payment saved successfully:', { id, status, email, amount: numericAmount });
     res.json({ success: true, id, status });
   } catch (error) {
+    console.error('❌ Error saving payment:', error);
     res.status(500).json({ success: false, error: error.message || 'Error saving payment' });
   }
 };

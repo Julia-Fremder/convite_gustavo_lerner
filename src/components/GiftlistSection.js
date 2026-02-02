@@ -142,9 +142,27 @@ const GiftlistSection = () => {
   };
 
   const registerPayment = async ({ method, amount, description, txId, items, phone }) => {
+    const email = userEmail.trim();
+    
+    if (!email) {
+      console.error('❌ Cannot register payment: userEmail is empty');
+      const errorMsg = 'Email não encontrado. Por favor, preencha seu email.';
+      setMessage(`⚠️ ATENÇÃO: ${errorMsg}`);
+      throw new Error(errorMsg);
+    }
+    
     try {
+      console.log('💳 Registering payment:', { 
+        method, 
+        amount, 
+        description, 
+        txId, 
+        email,
+        emailSource: 'localStorage (userEmail state)'
+      });
+      
       await paymentAPI.create({
-        email: userEmail.trim(),
+        email,
         amount,
         paymentType: method,
         message: userMessage || undefined,
@@ -152,9 +170,14 @@ const GiftlistSection = () => {
         txId,
         raw: { items, phone },
       });
+      
+      console.log('✅ Payment registered successfully with email:', email);
     } catch (err) {
+      console.error('❌ Failed to register payment:', err);
       // Surface a warning but do not block user from seeing the payment data
-      setMessage(err.message || 'Pagamento gerado, mas não foi possível registrar no banco.');
+      const errorMsg = err.message || 'Pagamento gerado, mas não foi possível registrar no banco.';
+      setMessage(`⚠️ ATENÇÃO: ${errorMsg}`);
+      throw err; // Re-throw to allow caller to handle it
     }
   };
 
@@ -175,14 +198,19 @@ const GiftlistSection = () => {
         txId: `MBW-${items.length}-${Date.now()}`,
       });
 
-      await registerPayment({
-        method: 'MBWay',
-        amount: total,
-        description: desc,
-        txId: result.txId,
-        items,
-        phone,
-      });
+      try {
+        await registerPayment({
+          method: 'MBWay',
+          amount: total,
+          description: desc,
+          txId: result.txId,
+          items,
+          phone,
+        });
+      } catch (registerErr) {
+        // Payment registered but failed to save - show warning but continue
+        console.warn('Payment generated but not saved to database:', registerErr);
+      }
 
       setPaymentResult({
         method: 'MBWay',
@@ -214,13 +242,18 @@ const GiftlistSection = () => {
         txId: `PIX-${items.length}-${Date.now()}`,
       });
 
-      await registerPayment({
-        method: 'PIX',
-        amount: total,
-        description: desc,
-        txId: result.txId,
-        items,
-      });
+      try {
+        await registerPayment({
+          method: 'PIX',
+          amount: total,
+          description: desc,
+          txId: result.txId,
+          items,
+        });
+      } catch (registerErr) {
+        // Payment generated but failed to save - show warning but continue
+        console.warn('Payment generated but not saved to database:', registerErr);
+      }
 
       setPaymentResult({ method: 'PIX', title: desc, amount: total, ...result });
       refreshUserPayments(userEmail);
