@@ -1,12 +1,13 @@
 /* global setTimeout */
 
 import { useCallback, useState } from 'react';
-import { MdContentCopy, MdOutlineEvent } from 'react-icons/md';
-import useNavigator from '../hooks/useNavigator';
+import { MdOutlineEvent } from 'react-icons/md';
+import useContentCopy from '../hooks/useContentCopy';
+import CopyButton from './CopyButton';
 import './InfoSection.css';
 
 const InfoSection = () => {
-  const { handleCopy, copyStatus } = useNavigator();
+  const { handleCopy, copyStatus } = useContentCopy();
 
   const now = new Date();
   const dtStamp = `${now.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
@@ -47,26 +48,20 @@ const InfoSection = () => {
           <h4 className="location-heading">Sinagoga de Tomar</h4>
           <p className="address-line">
             R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal
-            <button
-              type="button"
-              onClick={() => handleCopy('R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal')}
-              className="copy-button"
-              aria-label="Copiar endereço da Sinagoga"
-            >
-              <MdContentCopy size={16} /> Copiar
-            </button>
+            <CopyButton
+              text="R. Dr. Joaquim Jacinto 73, 2300-577 Tomar, Portugal"
+              title="Copiar endereço da Sinagoga"
+            />{' '}
+            Copiar
           </p>
           <h4 className="location-heading">Quinta da Colina Verde</h4>
           <p className="address-line">
             Rua Casal de Além 98, 2435-489 Olival, Portugal
-            <button
-              type="button"
-              onClick={() => handleCopy('Rua Casal de Além 98, 2435-489 Olival, Portugal')}
-              className="copy-button"
-              aria-label="Copiar endereço da Quinta"
-            >
-              <MdContentCopy size={16} /> Copiar
-            </button>
+            <CopyButton
+              text="Rua Casal de Além 98, 2435-489 Olival, Portugal"
+              title="Copiar endereço da Quinta"
+            />{' '}
+            Copiar
           </p>
         <p style={{fontSize: '16px'}}>Para ir conosco de autocarro manda mensagem direta pelo whatsapp</p>
         </div>

@@ -3,6 +3,7 @@ import useContent from '../hooks/useContent';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { paymentAPI } from '../services/apiClient';
 import GiftCard from './GiftCard';
+import CopyButton from './CopyButton';
 import './GiftlistSection.css';
 import '../components/Modal.css';
 
@@ -545,8 +546,17 @@ const GiftlistSection = () => {
             <div className="payment-details">
               <p><strong>Itens:</strong> {paymentResult.title}</p>
               <p><strong>Valor:</strong> {paymentResult.method === 'MBWay' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
-              {paymentResult.phone && <p><strong>Telefone Destino:</strong> {paymentResult.phone}</p>}
               {paymentResult.txId && <p><strong>ID Transação:</strong> {paymentResult.txId}</p>}
+              {paymentResult.method === 'PIX' && (
+                <p>
+                  <strong>Chave PIX:</strong> 04355073700{' '}
+                  <CopyButton
+                    text="04355073700"
+                    title="Copiar chave PIX"
+                    style={{ fontSize: '1.2em' }}
+                  />
+                </p>
+              )}
             </div>
             {paymentResult.qrCode && (
               <div className="payment-qr">
@@ -557,7 +567,12 @@ const GiftlistSection = () => {
             {paymentResult.payload && (
               <div className="payment-payload">
                 <p><strong>Payload:</strong></p>
-                <code>{paymentResult.payload}</code>
+                <code>{paymentResult.payload}</code>{' '}
+                <CopyButton
+                  text={paymentResult.payload}
+                  title="Copiar payload"
+                  style={{ fontSize: '1.2em' }}
+                />
               </div>
             )}
             <div className="modal-actions">
