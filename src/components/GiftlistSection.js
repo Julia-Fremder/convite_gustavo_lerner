@@ -596,28 +596,23 @@ const GiftlistSection = () => {
                     </div>
                   </div>
                   
-                  {paymentResult.mbReference && (
+                  {paymentResult.iban && (
                     <div className="mb-reference-section">
-                      <p className="payment-method-title">Referência Multibanco:</p>
-                      <p className="mb-reference-item">
-                        <strong>Entidade:</strong> {paymentResult.mbReference.entity}{' '}
+                      <p className="payment-method-title">IBAN para transferência:</p>
+                      <div className="mbway-phone-container">
+                        <span 
+                          onClick={() => navigator.clipboard.writeText(paymentResult.iban.replace(/\s/g, ''))}
+                          className="mbway-phone-number"
+                          title="Clique para copiar"
+                        >
+                          {paymentResult.iban}
+                        </span>
                         <CopyButton
-                          text={paymentResult.mbReference.entity}
-                          title="Copiar entidade"
-                          style={{ fontSize: '1em' }}
+                          text={paymentResult.iban.replace(/\s/g, '')}
+                          title="Copiar IBAN"
+                          style={{ fontSize: '1.2em' }}
                         />
-                      </p>
-                      <p className="mb-reference-item">
-                        <strong>Referência:</strong> {paymentResult.mbReference.reference}{' '}
-                        <CopyButton
-                          text={paymentResult.mbReference.reference}
-                          title="Copiar referência"
-                          style={{ fontSize: '1em' }}
-                        />
-                      </p>
-                      <p className="mb-reference-item">
-                        <strong>Valor:</strong> € {Number(paymentResult.amount).toFixed(2)}
-                      </p>
+                      </div>
                     </div>
                   )}
                 </div>
