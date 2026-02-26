@@ -2,11 +2,10 @@ const { generateMbwayPayment } = require('../services/mbwayService');
 
 const createMbwayPayment = async (req, res) => {
   try {
-    const { amount, phone, description, txId } = req.body || {};
+    const { amount, description, txId } = req.body || {};
 
     const result = await generateMbwayPayment({
       amount,
-      phone,
       description,
       txId,
     });

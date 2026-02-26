@@ -113,6 +113,47 @@
     border-bottom: none;
 }
 
+.payment-method-section {
+    margin-top: 20px;
+}
+
+.payment-method-divider {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.payment-method-title {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.mbway-phone-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mbway-phone-number {
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-beige-dark);
+    text-decoration: underline;
+}
+
+.mbway-phone-number:hover {
+    color: var(--color-beige-medium);
+}
+
+.mb-reference-section {
+    margin-top: 15px;
+}
+
+.mb-reference-item {
+    margin: 4px 0;
+}
+
 .payment-qr {
     text-align: center;
     margin: 20px 0;

@@ -161,20 +161,23 @@ const GiftlistSection = () => {
 
   const handleMbway = async (items) => {
     try {
+      console.log('handleMbway started with items:', items);
       setIsProcessing(true);
       setMessage('');
       setPaymentResult(null);
 
       const total = items.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0);
       const desc = items.map((i) => `${i.title} (${i.quantity}x)`).join(' | ');
-      const phone = items[0]?.phone; // Payment destination (from gift item)
+      
+      console.log('Generating MBWay payment:', { amount: total, description: desc });
 
       const result = await paymentAPI.generateMbway({
         amount: total,
-        phone,
         description: desc,
         txId: `MBW-${items.length}-${Date.now()}`,
       });
+      
+      console.log('MBWay payment generated:', result);
 
       await registerPayment({
         method: 'MBWay',
@@ -182,19 +185,23 @@ const GiftlistSection = () => {
         description: desc,
         txId: result.txId,
         items,
-        phone,
       });
+      
+      console.log('Payment registered successfully');
 
       setPaymentResult({
-        method: 'MBWay',
+        method: 'EUR',
         title: desc,
         amount: total,
-        phone,
         ...result
       });
+      
+      console.log('Payment result set:', paymentResult);
+      
       refreshUserPayments(userEmail);
     } catch (err) {
-      setMessage(err.message || 'Erro ao gerar pagamento MBWay');
+      console.error('Error in handleMbway:', err);
+      setMessage(err.message || 'Erro ao gerar pagamento EUR');
     } finally {
       setIsProcessing(false);
     }
@@ -202,18 +209,23 @@ const GiftlistSection = () => {
 
   const handlePix = async (items) => {
     try {
+      console.log('handlePix started with items:', items);
       setIsProcessing(true);
       setMessage('');
       setPaymentResult(null);
 
       const total = items.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0);
       const desc = items.map((i) => `${i.title} (${i.quantity}x)`).join(' | ');
+      
+      console.log('Generating PIX payment:', { amount: total, description: desc });
 
       const result = await paymentAPI.generatePix({
         amount: total,
         description: desc,
         txId: `PIX-${items.length}-${Date.now()}`,
       });
+      
+      console.log('PIX payment generated:', result);
 
       await registerPayment({
         method: 'PIX',
@@ -222,10 +234,16 @@ const GiftlistSection = () => {
         txId: result.txId,
         items,
       });
+      
+      console.log('Payment registered successfully');
 
       setPaymentResult({ method: 'PIX', title: desc, amount: total, ...result });
+      
+      console.log('Payment result set');
+      
       refreshUserPayments(userEmail);
     } catch (err) {
+      console.error('Error in handlePix:', err);
       setMessage(err.message || 'Erro ao gerar pagamento PIX');
     } finally {
       setIsProcessing(false);
@@ -255,13 +273,23 @@ const GiftlistSection = () => {
       return { ...gift, quantity: qty };
     });
     
-    if (!items.length) return;
+    if (!items.length) {
+      setMessage('Nenhum item selecionado.');
+      return;
+    }
 
     setShowConfirmModal(false);
-    if (Object.keys(selectedEur).length) {
-      await handleMbway(items);
-    } else {
-      await handlePix(items);
+    setMessage('');
+    
+    try {
+      if (Object.keys(selectedEur).length) {
+        await handleMbway(items);
+      } else {
+        await handlePix(items);
+      }
+    } catch (err) {
+      console.error('Erro ao processar pagamento:', err);
+      setMessage(err.message || 'Erro ao processar pagamento. Tente novamente.');
     }
   };
 
@@ -542,11 +570,59 @@ const GiftlistSection = () => {
       {paymentResult && (
         <div className="modal-overlay">
           <div className="modal-card">
-            <h4>{paymentResult.method} gerado</h4>
+            <h4>{paymentResult.method === 'EUR' ? 'Pagamento EUR' : paymentResult.method} gerado</h4>
             <div className="payment-details">
               <p><strong>Itens:</strong> {paymentResult.title}</p>
-              <p><strong>Valor:</strong> {paymentResult.method === 'MBWay' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
+              <p><strong>Valor:</strong> {paymentResult.method === 'EUR' ? '€' : 'R$'} {Number(paymentResult.amount).toFixed(2)}</p>
               {paymentResult.txId && <p><strong>ID Transação:</strong> {paymentResult.txId}</p>}
+              
+              {paymentResult.method === 'EUR' && paymentResult.mbwayPhone && (
+                <div className="payment-method-section">
+                  <div className="payment-method-divider">
+                    <p className="payment-method-title">MBway manual para:</p>
+                    <div className="mbway-phone-container">
+                      <span 
+                        onClick={() => navigator.clipboard.writeText(paymentResult.mbwayPhone.replace(/\s/g, ''))}
+                        className="mbway-phone-number"
+                        title="Clique para copiar"
+                      >
+                        {paymentResult.mbwayPhone}
+                      </span>
+                      <CopyButton
+                        text={paymentResult.mbwayPhone.replace(/\s/g, '')}
+                        title="Copiar número MBWay"
+                        style={{ fontSize: '1.2em' }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {paymentResult.mbReference && (
+                    <div className="mb-reference-section">
+                      <p className="payment-method-title">Referência Multibanco:</p>
+                      <p className="mb-reference-item">
+                        <strong>Entidade:</strong> {paymentResult.mbReference.entity}{' '}
+                        <CopyButton
+                          text={paymentResult.mbReference.entity}
+                          title="Copiar entidade"
+                          style={{ fontSize: '1em' }}
+                        />
+                      </p>
+                      <p className="mb-reference-item">
+                        <strong>Referência:</strong> {paymentResult.mbReference.reference}{' '}
+                        <CopyButton
+                          text={paymentResult.mbReference.reference}
+                          title="Copiar referência"
+                          style={{ fontSize: '1em' }}
+                        />
+                      </p>
+                      <p className="mb-reference-item">
+                        <strong>Valor:</strong> € {Number(paymentResult.amount).toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              
               {paymentResult.method === 'PIX' && (
                 <p>
                   <strong>Chave PIX:</strong> 04355073700{' '}
