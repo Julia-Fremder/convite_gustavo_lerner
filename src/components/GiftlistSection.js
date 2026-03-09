@@ -629,23 +629,6 @@ const GiftlistSection = () => {
                 </p>
               )}
             </div>
-            {paymentResult.qrCode && (
-              <div className="payment-qr">
-                <p>Escaneie o código QR:</p>
-                <img src={paymentResult.qrCode} alt={`QR para ${paymentResult.method}`} />
-              </div>
-            )}
-            {paymentResult.payload && (
-              <div className="payment-payload">
-                <p><strong>Payload:</strong></p>
-                <code>{paymentResult.payload}</code>{' '}
-                <CopyButton
-                  text={paymentResult.payload}
-                  title="Copiar payload"
-                  style={{ fontSize: '1.2em' }}
-                />
-              </div>
-            )}
             <div className="modal-actions">
               <button
                 type="button"
