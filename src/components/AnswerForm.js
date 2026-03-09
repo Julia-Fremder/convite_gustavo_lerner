@@ -9,6 +9,7 @@ import { validateForm } from '../utils/formHelpers';
 import { confirmationAPI } from '../services/apiClient';
 
 const AnswerForm = ({ plateOptions = [] }) => {
+  const isPlateOptionDisabled = true;
   const [storedEmail, setStoredEmail] = useLocalStorage();
   const [lastSubmission, setLastSubmission] = useState(null);
   const [message, setMessage] = React.useState('');
@@ -247,6 +248,11 @@ const AnswerForm = ({ plateOptions = [] }) => {
 
           <div className="guests-section">
             <h4>Escolha uma opção para cada convidado:</h4>
+            {isPlateOptionDisabled && (
+              <p className="submission-note">
+                *A escolha de opção de prato está temporariamente desabilitada.
+              </p>
+            )}
             
             {guests.map((guest, index) => (
               <div 
@@ -284,7 +290,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
                         handleGuestChange(guest.id, 'plate', e.target.value)
                       }}
                       required
-                      disabled={form.isSubmitting}
+                      disabled={form.isSubmitting || isPlateOptionDisabled}
                       className="form-select"
                     >
                       {plateOptions.map((option) => (
@@ -298,7 +304,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
                   <button
                     type="button"
                     onClick={() => removeGuest(guest.id)}
-                    disabled={form.isSubmitting}
+                    disabled={form.isSubmitting || isPlateOptionDisabled}
                     className="icon-button trash-button"
                     title="Remover convidado"
                   >
@@ -308,7 +314,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
                   <button
                     type="button"
                     onClick={addGuest}
-                    disabled={form.isSubmitting}
+                    disabled={form.isSubmitting || isPlateOptionDisabled}
                     className="icon-button add-button"
                     title="Adicionar convidado"
                   >
@@ -324,7 +330,7 @@ const AnswerForm = ({ plateOptions = [] }) => {
                 <button
                   type="button"
                   onClick={addGuest}
-                  disabled={form.isSubmitting}
+                  disabled={form.isSubmitting || isPlateOptionDisabled}
                   className="icon-button add-guest-plus"
                   title="Adicionar convidado"
                 >
